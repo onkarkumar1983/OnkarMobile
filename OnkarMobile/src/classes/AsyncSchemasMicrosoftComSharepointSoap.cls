@@ -5,6 +5,8 @@ public class AsyncSchemasMicrosoftComSharepointSoap {
         public String getValue() {
             schemasMicrosoftComSharepointSoap.ModeResponse_element response = (schemasMicrosoftComSharepointSoap.ModeResponse_element)System.WebServiceCallout.endInvoke(this);
             system.debug('Onkar Kumar');
+            system.debug('Onkar Kumar');
+            
             return response.ModeResult;
             
             
