@@ -1,0 +1,132 @@
+<apex:page standardController="CRMG_WF__Workflow__c" extensions="CRMG_WF.SplashCls" action="{!splashRedirect}">
+<link type="text/css" rel="stylesheet" href="/sCSS/31.0/sprites/1410289302000/Theme3/default/base/splash.css"/>
+<apex:stylesheet value="/sCSS/25.0/sprites/1342034628000/Theme3/default/gc/versioning.css" />
+<apex:stylesheet value="/sCSS/25.0/sprites/1342034628000/Theme3/default/gc/extended.css" />
+
+
+<apex:sectionHeader title="Getting Started with Workflow by CRMGuidance"/>
+<style>
+    li{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    line-height: 20px;
+    }
+</style>
+ <apex:form >
+     <apex:pageBlock >
+     <div>
+         <br></br><font size="3" color="red">You must initiate the first three "Getting Started" bullet points in order for your Workflow App workflow to work properly</font>
+          <br></br>
+          <br></br>
+           <br></br>
+      
+          <div class="lbBody" style="argin: 0;padding: 15px; background-color: #fff; border: 1px solid #e8e8e8;">
+               <apex:tabPanel switchType="client" >
+                  <apex:tab label="Getting Started" name="Workflow" id="Workflow">
+                  
+                  <br></br>
+                     
+             <span class="mini_title" style="font-weight: bold;margin-left:.5cm;">Getting Started </span>
+
+                      <ul class="itemsList">
+                          <li><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/>
+                             <span style="margin-left:.1cm;"> <a href="https://www.youtube.com/watch?v=mUjzYICi5As"> Click here</a> to see a video tutorial of these steps. Then follow along by going to Setup > Develop > Custom Settings > Click on “Manage” > click on New then enter this exact phrase “Workflow Global Setting", then click on Save 
+                             <ul><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/> When definiing your Global Workflow Settings, for each grouping, choose either Auto Complete or Picklist. You cannot select both on any given grouping</ul> 
+                              <ul><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/> If you have less than 150 Email Templates in your template folders, and less than 200 custom fields (per Object) on ALL Standard and Custom Objects, select the following settings: Email Template Picklist, New Record Picklist and Field Update Picklist</ul>
+                              <ul><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/> Make sure the following fields have been deslected on your Custom Settings: Email Template Auto Complete, New Record Auto Complete, Field Update Auto Complete and Execute Now</ul>
+                              <ul><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/> Select Execute Now. this should ONLY be available during your testing period. If you leave this bank initially, please come back to this location later and select Execute Now</ul>
+                              <ul><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/> Ignore Lookup Page Size</ul>
+                              <ul><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/> Leave Turn Off Workflow Splash Page blank</ul>  
+                              </span></li>
+                              <br></br>
+                          <li><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/>
+                          <span style="margin-left:.1cm;"> Go to the Workflow Setup Object by clicking on the (<b>+</b>) at the end of your tabs, then clicking on Workflow Setup. Once there,
+                          click on “Schedule Workflow” button to activate your Workflow engine. <ul><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/> Once the engine is started, your workflow actions will be delivered every 30 minutes</ul>
+                          </span></li>
+                          <br></br>
+                           <li><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/>
+                           <span style="margin-left:.1cm;"> Before setting up a "<b>Create New Record</b>" workflow action, go to the Workflow Settings tab, then to the "Create New Record Picklist". Click on "Select All", then DESELECT only the Objects you wish to see in your "Create A New Record" picklist offering. Click <b>Save</b>
+                           <ul><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/> Also, you must customize the "Field Set" page layout if you plan to use Create a New Record". You can customize your field set by going to Setup, then go to your Standard or Custom Object, then go to <b>Field Sets</b>" Be sure to <b><font size="2" color="red">ADD ALL REQUIRED FIELDS</font></b> to your Field Set page layout, otherwise the creation of the new records will not work</ul>
+                           </span></li>
+                           <br></br>
+                           <li><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/>
+                           <span style="margin-left:.1cm;"> <b>Sandbox Users Only</b>: Your Email Alerts will not be sent if you have NOT updated your 'Sandbox' Email Admininstration setting for "Deliverability" Go Setup > Email Administration > Deliverability > Access level, set to All Emails. Click Save
+                           </span></li>
+                           <br></br>
+                           <li><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/> 
+                           <span style="margin-left:.1cm;"> <b>Email Alert Users</b>: Your Email Alerts will not get sent to any of your desired recipients (Owner, Related Users, etc) if on a specific Object record, you have a related Contact Lookup field, where the Email field is blank for that lookup contact record. This issue exists as a Salesforce limitation</span></li>
+                      </ul>
+      <span class="mini_title" style="font-weight: bold;margin-left:.5cm;">What is Workflow?</span>
+      <p  style="margin-left:.5cm;">Workflow automates the following types of actions based on your organization's processes:</p>
+      <ul class="itemsList">
+          <li  style="margin-left:.1cm;"><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/><span style="margin-left:.1cm;"><b>Tasks</b>&mdash;Assign a new task to a user, role, or record owner.</span></li>
+          <li  style="margin-left:.1cm;"><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/><span style="margin-left:.1cm;"><b>Email Alerts</b>&mdash;Send an email to one or more recipients, including to Customer Contacts, Users, and Non Users</span></li>
+          <li  style="margin-left:.1cm;"><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/><span style="margin-left:.1cm;"><b>Field Updates</b>&mdash;Update the value of a field on a record</span></li>
+          <li  style="margin-left:.1cm;"><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/><span style="margin-left:.1cm;"><b>Create New Records</b>&mdash;Create a new record on the current or a related object</span></li>
+      </ul>
+      
+   <p  style="margin-left:.5cm;"> For example, workflow can:</p>
+    <ul class="itemsList">
+        <li style="margin-left:.1cm;"><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/><span style="margin-left:.1cm;">Assign follow-up tasks to a support rep one week after a case is updated</span></li>
+        <li style="margin-left:.1cm;"><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/><span style="margin-left:.1cm;">Send sales management an email alert when a sales rep qualifies a large deal. Or send an email alert to the Case Owner each time a customer replies to an Email to Case email from the Support Rep</span></li>
+        <li style="margin-left:.1cm;"><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/><span style="margin-left:.1cm;">Change the Owner field on a contract three days before it expires. Or, change Lead Status field to Neglected if a Lead has not been modified or edited for 90 days</span></li>
+        <li style="margin-left:.1cm;"><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/><span style="margin-left:.1cm;">Trigger the creation of a new Project when Opporunity Stage equals Closed/Won, and map specified fields from the Opportunity Object to the Project Object</span></li>
+    </ul>
+    <p style="margin-left:.5cm;"><b>How does the Evaluation Criteria work?</b></p>
+    <ul class="itemsList" style="margin-left:.1cm;">
+        <li style="margin-left:.1cm;"><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/><span style="margin-left:.1cm;"><b>Option #1</b>: Created  - Evaluates the rule criteria each time a record is created. If the rule criteria is met, run the rule. Ignores all updates to existing records
+With this option, the <font size="2" color="red">rule never runs more than once per record.</font></span></li>
+<br></br>
+        <li style="margin-left:.1cm;"><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/><span style="margin-left:.1cm;"><b>Option 2</b>:  Created, and every time it’s edited - Evaluates the rule criteria each time a record is created, or edited. Once the rule criteria is met, run the rule. After running the rule one time, this criteria will ignore all updates to existing records
+With this option, the <font size="2" color="red">rule never runs more than once per record.</font></span></li><br></br>
+        <li style="margin-left:.1cm;"><img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/><span style="margin-left:.1cm;"><b>Option 3</b>: Any time the criteria is met. <b>Created and or Edited timeframe is NOT consideredt</b>. This option is Ideal for 1 time "Mass Updates to “existing records, and for highly active records where the same workflow action may potential occur multiple 
+        times over the lifespan of a record. An example might be, workflow rules that require a task to get created on an Opportunity, when any "Open" Opportunity has not been modiefied or had an activity for 21 days.  You would want that task to get created each and every time this criteria were met  
+        <UL> <img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/> This rule does not consider whether or not the rule has been newly created or edited.  If the rule criteria is met, run the rule. This includes existing unedited records that meet your criteria NOW</UL> 
+
+<UL> <img width="8" height="8" title="bullet" class="bullet" alt="bullet" src="/img/red_bullet.gif"/> Users must be very careful when using this rule. We suggest you use multiple criteria when using this option, including a row that uses the Operator "is not equal to". With this option, the <font size="2" color="red">rule runs more than once per record</font></ul></span>
+</li>
+<br><font size="2" color="red">We recommend you display this page and DO NOT click on the following checkbox field until you are extremely familiar with the contents of this page</font></br>
+    </ul>
+             <div>
+             <apex:inputCheckbox value="{!dontShow}"/>  Don't show me this page again 
+             </div>
+            <div>&nbsp;</div>
+             <div>
+             <apex:commandButton value="Continue" action="{!save}"/>         
+             </div>
+           </apex:tab>
+                  <apex:tab label="Release Notes" name="WorkflowSetup" id="WorkflowSetup">
+
+                      <p></p>
+                       <span class="mini_title" style="font-weight: bold;margin-left:.5cm;">January 1, 2015: Updates to Workflow For Professional Editon v2.0</span>
+                       <p  style="margin-left:.5cm;"><b>Enhancements</b></p>
+                      <p></p>
+                      <p style="margin-left:.5cm;">Added new Visualforce Email Templates to support email alerts that require merging values from both the Opportunity and Product Line Items</p>
+                      <p style="margin-left:.5cm;">New Workflow Actions Page with Sub tabs to simplify managing your Workflow Actions in one easy to access place</p>
+                      <p style="margin-left:.5cm;">Related to the Create a New Record Workflow Action, Users can now create Leads from Opportunities</p>
+                      <p style="margin-left:.5cm;">Post Install Script: New Customers no longer need to update Custom Settings, nor start the Workflow Schedule. These steps are automatically initiated with our Post Install Script</p>
+                      <p style="margin-left:.5cm;">Added new content to the UI the follow VF Pages: Email Alerts, Create a New Record, and the Workflow Rule "Evaluation Criteria" section</p>
+                      
+                      <br></br>
+                      <p  style="margin-left:.5cm;"><b>Bug Fixes</b></P>
+                      <br></br>
+                      <p style="margin-left:.5cm;">Enabled Email Alerts to Custom Email Fields on Standard Objects, when the Custom Email Field was selected as teh "Email Recipient</p>
+                      <p style="margin-left:.5cm;">Reapired Copy and Paste to and from Currency Fields</p>
+                      <br></br>
+                      <p  style="margin-left:.5cm;">*******************************************************</p>
+                      <span class="mini_title" style="font-weight: bold;margin-left:.5cm;">November 4, 2014: Updates to Workflow For Professional Editon v1.94</span>
+      <p  style="margin-left:.5cm;">If you have upgraded from version 1.9335 or earlier, "Clone" will NOT work on your existing workflow rules. Clone will only work on your NEW Workflow Rules, created in version 1.94 and greater. </p>
+     <p  style="margin-left:.5cm;"><b>New Functionality</b><br></br>
+     <br>"Clone" - Now you can Clone Inactive Workflow Rules. To make Clone button visible, you must click on the "Deactiveate" button from the Workflow Rule. Clone only copies your Workflow Rule Criteria, and does not Copy the Workflow Actions.</br>
+     <br><br>Mass Updates on Create a New Record Picklist - We've added a "Select All" checkbox field for the Create a New Record Picklist section on the "Workflow Setup" page. </br></br></p>
+      <p  style="margin-left:.5cm;"><b>Bug Fixes</b> <br><br>Workflow Version 1.94 Includes a bug fix to repair our "Copy and Paste" functionality for the Workflow Action Field Updates. There was an issue which prevented copy and paste from working properly when the Source field was Field Type = "Currency"</br></br></p>
+                                    
+             
+                  </apex:tab>
+               </apex:tabPanel>
+          </div>  
+      </div>    
+     </apex:pageBlock>
+ </apex:form>
+</apex:page>

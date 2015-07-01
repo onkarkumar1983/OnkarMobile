@@ -1,0 +1,26 @@
+<apex:page controller="CRMG_WF.LookupRecordTypeCls" showHeader="false" sidebar="false">
+<apex:sectionHeader title="Lookup"/>
+<script type="text/javascript">
+
+    function SendValueToParent(val){
+       try{
+        parent.window.opener.document.getElementById('{!$CurrentPage.parameters.parentId}').value = val;
+            window.top.close();
+        }catch(err){
+        alert(err);
+        }
+    }
+</script>
+
+ <apex:form >
+     <apex:outputPanel layout="" style="width:100%">
+     <apex:pageBlock >
+      <apex:pageBlockTable value="{!RecordType}" var="rec">
+          <apex:column >
+              <apex:outputLink onclick="SendValueToParent('{!rec['id']}')">{!rec['Name']}</apex:outputLink>
+          </apex:column>
+      </apex:pageBlockTable>
+     </apex:pageBlock>
+     </apex:outputPanel>
+ </apex:form>
+</apex:page>

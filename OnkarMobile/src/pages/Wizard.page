@@ -1,0 +1,22 @@
+<apex:page sidebar="false">
+<apex:includeScript value="{!URLFOR($Resource.anjularjs, '/angular-1.2.18/angular.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-1.10.2.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.bootstrapsfdc, '/bootstrapSfdc/css/SFDCbootstrap.css')}"/>
+<apex:includeScript value="{!URLFOR($Resource.bootstrapsfdc, '/bootstrapSfdc/js/bootstrap.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.bootstrapsfdc, '/bootstrapSfdc/js/bootstrap.js')}"/>
+<div class="bootstrap-sfdc" ng-app="app">
+<div class="row">
+<div class="col-md-10 col-md-offset-2">
+<div class="panel panel-warning">
+  <div class="panel-heading">
+    <h3 class="panel-title">Panel title</h3>
+  </div>
+  <div class="panel-body">
+    Panel content
+  </div>
+</div>
+</div>
+</div>
+</div>
+</apex:page>

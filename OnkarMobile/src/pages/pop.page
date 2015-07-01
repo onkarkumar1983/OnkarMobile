@@ -1,0 +1,27 @@
+<apex:page >
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-1.10.2.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.JQUery,    '/jquery-ui-1.10.4.custom/css/smoothness/jquery-ui-1.10.4.custom.css')}"/>
+
+<script>
+    $(function() {
+            
+      dialog = $("#users-contain" ).dialog({
+      autoOpen: true,
+      height: 800,
+      width: 800,
+      modal: true,
+      buttons: {
+          Cancel: function() {
+          dialog.dialog( "close" );
+        }
+      }
+    });
+
+  });
+    
+</script>
+<div id="users-contain" class="ui-widget">
+<apex:iframe width="800" height="800" src="https://c.ap1.visual.force.com/apex/calender"/>
+</div>
+</apex:page>

@@ -1,0 +1,40 @@
+<apex:page extensions="CRMG_WF.WorkflowController" id="pg" standardController="CRMG_WF__Workflow__c">
+<apex:sectionHeader subtitle="{!selectedSObject}" title="Add Time Trigger"/>
+<apex:form id="frm">
+<apex:pageBlock title="Workflow Time Trigger Edit" id="pb">
+	<apex:pageBlockButtons location="bottom"> 
+		<apex:commandButton action="{!saveTimeTrigger}" value="Save"/>
+		<apex:commandButton action="{!cancelTimeTrigger}" value="Cancel"/>
+	</apex:pageBlockButtons>	
+		<br/>
+		<table style="width:80%; font-weight:bold;">
+			<tr>
+				<td>
+					<apex:outputLabel escape="false" value="Workflow Rule"/>
+				</td>
+				<td>
+					<apex:outputLabel escape="false" value="{!JSENCODE(workflow.name)}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<apex:outputLabel escape="false" value="Trigger Time"/>
+				</td>
+				<td style="width:70%">
+					<div class="requiredInput">
+						<div class="requiredBlock"></div>
+						<apex:inputText value="{!timeTriggerInstance.triggerObj.CRMG_WF__Number__c}" style="width:50px"/>&nbsp;&nbsp;
+						<apex:inputField value="{!timeTriggerInstance.triggerObj.CRMG_WF__Days_Hours__c}"/>&nbsp;&nbsp;
+						<apex:inputField value="{!timeTriggerInstance.triggerObj.CRMG_WF__After_Before__c}"/>&nbsp;&nbsp;
+						<apex:selectList value="{!selectedDateApiName}" multiselect="false" size="1">
+			      	<apex:selectOptions value="{!dateFields}"/>
+			      </apex:selectList>
+			      <div style="clear:both;"></div>
+			  	</div>
+				</td>
+			</tr>
+		</table>
+	</apex:pageBlock>
+	
+</apex:form>
+</apex:page>

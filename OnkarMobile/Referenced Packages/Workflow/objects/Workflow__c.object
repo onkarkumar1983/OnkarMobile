@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>WorkflowWizardStep3</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>WorkflowSplash</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>WorkflowDetailPage</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <enableActivities>false</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Description__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Description</label>
+        <required>false</required>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Evaluation_Criteria__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Evaluation Criteria</label>
+        <picklist>
+            <picklistValues>
+                <fullName>created</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>created, and every time it’s edited</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>created, and any time it’s edited to subsequently meet criteria</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Filter_Logic__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Filter Logic</label>
+        <length>32768</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Object_Formula__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF( OR(ISBLANK(Object_Label__c), ISNULL(Object_Label__c)), Object__c, Object_Label__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Object</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object_Label__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Object</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Object</label>
+        <length>255</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Rule_Criteria_Labled__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Rule Criteria</label>
+        <length>32768</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Rule_Criteria_Query__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Rule Criteria Query</label>
+        <length>32768</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Rule_Criteria__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Rule Criteria Rules</label>
+        <length>32768</length>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Workflow_Action_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Workflow Action</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Task</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Email Alert</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Field Update</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>isActive__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Active</label>
+        <type>Checkbox</type>
+    </fields>
+    <label>Workflow</label>
+    <listViews>
+        <fullName>Active_Email_Alerts</fullName>
+        <columns>NAME</columns>
+        <columns>Object_Formula__c</columns>
+        <columns>Description__c</columns>
+        <columns>Rule_Criteria_Query__c</columns>
+        <columns>Filter_Logic__c</columns>
+        <columns>isActive__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Workflow_Action_Type__c</field>
+            <operation>includes</operation>
+            <value>Email Alert</value>
+        </filters>
+        <filters>
+            <field>isActive__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <label>3. All Active Email Alerts</label>
+    </listViews>
+    <listViews>
+        <fullName>Active_Field_Updates</fullName>
+        <columns>NAME</columns>
+        <columns>Object_Formula__c</columns>
+        <columns>Rule_Criteria_Query__c</columns>
+        <columns>Workflow_Action_Type__c</columns>
+        <columns>Filter_Logic__c</columns>
+        <columns>Description__c</columns>
+        <columns>isActive__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Workflow_Action_Type__c</field>
+            <operation>includes</operation>
+            <value>Field Update</value>
+        </filters>
+        <filters>
+            <field>isActive__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <label>4. All Active Field Updates</label>
+    </listViews>
+    <listViews>
+        <fullName>Active_Tasks</fullName>
+        <columns>NAME</columns>
+        <columns>Object_Formula__c</columns>
+        <columns>Workflow_Action_Type__c</columns>
+        <columns>Rule_Criteria_Query__c</columns>
+        <columns>Filter_Logic__c</columns>
+        <columns>Description__c</columns>
+        <columns>isActive__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Workflow_Action_Type__c</field>
+            <operation>includes</operation>
+            <value>Task</value>
+        </filters>
+        <filters>
+            <field>isActive__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <label>5. All Active Tasks</label>
+    </listViews>
+    <listViews>
+        <fullName>All_Active</fullName>
+        <columns>CREATED_DATE</columns>
+        <columns>NAME</columns>
+        <columns>Object__c</columns>
+        <columns>Object_Label__c</columns>
+        <columns>Description__c</columns>
+        <columns>isActive__c</columns>
+        <columns>Object_Formula__c</columns>
+        <columns>Workflow_Action_Type__c</columns>
+        <columns>Rule_Criteria_Query__c</columns>
+        <columns>Rule_Criteria_Labled__c</columns>
+        <columns>UPDATEDBY_USER</columns>
+        <columns>Rule_Criteria__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>isActive__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <label>2. All Active</label>
+    </listViews>
+    <listViews>
+        <fullName>All_Workflows</fullName>
+        <columns>NAME</columns>
+        <columns>Workflow_Action_Type__c</columns>
+        <columns>Evaluation_Criteria__c</columns>
+        <columns>Rule_Criteria_Query__c</columns>
+        <columns>Rule_Criteria_Labled__c</columns>
+        <columns>Object_Formula__c</columns>
+        <columns>Description__c</columns>
+        <columns>isActive__c</columns>
+        <columns>CREATED_DATE</columns>
+        <filterScope>Everything</filterScope>
+        <label>1. All Workflows</label>
+    </listViews>
+    <listViews>
+        <fullName>Today_Workflows</fullName>
+        <columns>NAME</columns>
+        <columns>isActive__c</columns>
+        <columns>Workflow_Action_Type__c</columns>
+        <columns>Evaluation_Criteria__c</columns>
+        <columns>Rule_Criteria_Query__c</columns>
+        <columns>Rule_Criteria_Labled__c</columns>
+        <columns>Object__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>CREATED_DATE</field>
+            <operation>greaterOrEqual</operation>
+            <value>12/23/2014 12:00 AM</value>
+        </filters>
+        <label>Today Workflows</label>
+    </listViews>
+    <nameField>
+        <label>Workflow Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Workflows</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Object_Formula__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>isActive__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Workflow_Action_Type__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Description__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>CREATEDBY_USER</customTabListAdditionalFields>
+        <customTabListAdditionalFields>CREATED_DATE</customTabListAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Validate_Rule_Criteria_Query</fullName>
+        <active>false</active>
+        <description>validate Rule Criteria query</description>
+        <errorConditionFormula>IF( NOT( ISNULL(Rule_Criteria_Query__c ) ), 
+NOT(REGEX(Rule_Criteria_Query__c , &quot;\\b(?i)where [a-zA-Z0-9_#-+!]*[ ]*[!]*(=|is)[ ]*[a-zA-Z0-9&apos;\&quot;_#-+!][a-zA-Z0-9&apos;\&quot;_#-+!]*&quot;)), 
+FALSE 
+)</errorConditionFormula>
+        <errorDisplayField>Rule_Criteria_Query__c</errorDisplayField>
+        <errorMessage>Invalid Rule Criteria Query</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>Execute_Now</fullName>
+        <availability>online</availability>
+        <description>This button is called for executing the batch class for current Workflow</description>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Execute Now</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>{!REQUIRESCRIPT(&quot;/soap/ajax/10.0/connection.js&quot;)}
+{!REQUIRESCRIPT(&quot;/soap/ajax/10.0/apex.js&quot;)}
+var result = sforce.apex.execute(&quot;CustomButtonWebService&quot;,&quot;ExecuteWorkflow&quot;,{id:&apos;{!Workflow__c.Id}&apos;});
+alert(result);</url>
+    </webLinks>
+</CustomObject>

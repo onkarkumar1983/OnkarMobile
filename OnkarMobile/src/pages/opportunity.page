@@ -1,0 +1,46 @@
+<apex:page standardController="Opportunity" extensions="opportunityExtnCls">
+<apex:sectionHeader title="Opportunity Edit" subtitle="Opportunity"/>
+<apex:form >
+    <apex:pageBlock >
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton value="Save" action="{!Save}"/>
+            <apex:commandButton value="Save" action="{!Cancel}"/>
+        </apex:pageBlockButtons>
+        <table cellspacing="2" cellpadding="2" border="0" width="100%">
+            <tr>
+              <td width="25%">Name</td>
+              <td width="25%">Owner</td>
+              <td width="25%">Amount</td>
+              <td width="25%">Created Date</td>
+            </tr> 
+            <tr>
+              <td><apex:inputField value="{!Op.Name}"/></td>
+              <td>Owner</td>
+              <td>Amount</td>
+              <td>Created Date</td>
+            </tr> 
+             <tr>
+               <td>&nbsp;</td>
+              <td colspan="3">
+                  <table border="0" width="80%">
+                       <tr>
+                          <td width="25%">Product Name</td>
+                          <td width="14%">Quantity</td>
+                          <td width="40%">Unit Price</td>
+                          <td width="15%">Total Price</td>
+                     </tr> 
+                     <apex:repeat value="{!op.OpportunityLineItems}" var="prd">
+                      <tr>
+                          <td width="25%"><apex:inputField value="{!prd.Quantity}"/></td>
+                          <td width="14%">Quantity</td>
+                          <td width="40%">Unit Price</td>
+                          <td width="15%">Total Price</td>
+                     </tr> 
+                     </apex:repeat>
+                  </table>
+              </td>
+            </tr>  
+        </table>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

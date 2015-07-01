@@ -1,0 +1,25 @@
+<apex:page docType="html-5.0" >
+<apex:includeScript value="{!URLFOR($Resource.anjularjs, '/angular-1.2.18/angular.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-1.10.2.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.bootstrap, '/bootstrap-3.1.1-dist/js/bootstrap.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.bootstrap, '/bootstrap-3.1.1-dist/js/bootstrap.js')}"/>
+<script>
+    $(document).ready(function() {
+      //  $('.pbButton').addClass('align:left');
+    });
+</script>
+<apex:sectionHeader title="Workflow Action" subtitle="New Task"/>
+    <apex:form >
+        <apex:pageBlock title="Configure Task" mode="edit">
+            <apex:pageBlockButtons location="both" style="text-align:right">
+                <apex:commandButton value=" Save "/>
+                <apex:commandButton value=" Cancel "/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Information">
+                <apex:outputLabel >Object</apex:outputLabel>
+                <apex:inputText />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

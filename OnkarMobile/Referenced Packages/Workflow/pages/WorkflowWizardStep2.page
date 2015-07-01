@@ -1,0 +1,373 @@
+<apex:page extensions="CRMG_WF.WorkflowController" id="pg" standardController="CRMG_WF__Workflow__c">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<apex:sectionHeader subtitle="New Workflow Rule" title="{!selectedSObject}"/>
+<br/>
+<apex:form id="frm">
+<apex:actionFunction name="callAjaxToFetchFieldValues" action="{!callAjaxToFetchFieldValuesAction}" 
+        oncomplete="showLightBox();showHideFilter();" rerender="frm" status="myStatus">
+    <apex:param value="" name="firstParam" assignTo="{!selectedApiFieldName}"/>
+    <apex:param value="" name="secondParam" assignTo="{!selectedIndex}"/>
+</apex:actionFunction> 
+<apex:outputPanel id="lookupPanel" styleClass="lookupPanel">
+                    <div id="light" class="white_content" style="width:40%; " >
+                      <apex:pageBlock title="Lookup Edit" id="pageBlock1" mode="edit">
+                        <div id="inner_light"> 
+                            <apex:pageBlockButtons >
+                                <apex:commandButton value="Insert Selected"  action="{!insertSelected}" rerender="frm" 
+                                                    oncomplete="showHideFilter();" status="myStatus"/>
+                                <apex:commandButton value="Cancel" onclick="hideLightBox(); return false;"/>
+                            </apex:pageBlockButtons>
+                            <div style="overflow:auto; {!IF(listWrapperSelectionForPicklistValues.size > 0, 'height:260px;', 'height:30px;')} padding:15px;" >
+                            <apex:outputPanel rendered="{!listWrapperSelectionForPicklistValues.size > 0}" >
+                                <apex:variable var="index1" value="{!0}" />
+                                <apex:pageBlockTable value="{!listWrapperSelectionForPicklistValues}" 
+                                    var="prod" id="table">
+                                    <apex:column >
+                                        <apex:inputCheckbox value="{!prod.isSelected}" styleClass="group"/>
+                                    </apex:column>
+                                    <apex:column headerValue="Value">
+                                        <apex:outputLabel escape="false" value="{!JSENCODE(prod.picklistValue)}" styleClass="picklistValue{!index1}"/>
+                                        <apex:variable var="index1" value="{!index1+1}" />
+                                    </apex:column>
+                                </apex:pageBlockTable>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!listWrapperSelectionForPicklistValues.size == 0}">
+                                <apex:selectRadio value="{!selectedCheckBoxValue}" id="myradio" layout="pageDirection">
+                                    <apex:selectOptions value="{!items}"/>
+                                </apex:selectRadio>
+
+                            </apex:outputPanel>
+                            </div>
+                          </div>
+                      </apex:pageBlock>         
+                </div>
+            </apex:outputPanel>
+             
+    <div id="fade" class="black_overlay"></div>
+<apex:pageBlock title="Step 2: Configure Workflow Rule" id="pb" mode="edit"> 
+    <apex:pageBlockButtons style="float:right;">
+        <apex:commandButton action="{!previousToStep1}" value="Previous" rendered="{!!isEditMode}"/>
+        <apex:commandButton action="{!saveAndNext}" value="{!IF(isEditMode, 'Save' , 'Save & Next')}"/>
+        <apex:commandButton action="{!cancel}" value="Cancel"/>
+    </apex:pageBlockButtons>
+    <br/>   
+    &nbsp;&nbsp;&nbsp;
+    <apex:outputLabel escape="false" value="Enter the name, description, and criteria to trigger your workflow rule. In the next step, associate workflow types with this workflow rule." />
+    <br/><br/>
+    <apex:pageMessages id="msg"/>
+    <apex:pageBlockSection columns="1" title="Edit Rule" id="pbsectionPrimary">
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel escape="false" value="Object" />
+            <apex:outputLabel escape="false" value="{!JSENCODE(selectedSObject)}" />
+        </apex:pageBlockSectionItem>
+        <apex:inputField value="{!workflow.name}" label="Rule Name" required="true" id="ruleName"/>
+        <apex:inputTextarea value="{!workflow.CRMG_WF__Description__c}" cols="70" 
+                                                    rows="3" label="Description"/>
+    </apex:pageBlockSection>
+    <apex:pageBlockSection columns="1" title="Evaluation Criteria" id="pbEvltnCriteria">
+
+        <apex:pageBlockSectionItem >
+
+        <apex:outputLabel escape="false" value="" />
+        <apex:outputLabel styleClass="cantAddTimeDependentMsg" style="display: {!IF(workflow.CRMG_WF__Evaluation_Criteria__c != 'created, and every time it’s edited', 'none;', 'block;')}" escape="false" 
+            value="You cannot add time-dependent workflow actions with this option." />
+      </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel escape="false" value="Evaluate the rule when a record is: " />
+            <apex:selectRadio value="{!workflow.CRMG_WF__Evaluation_Criteria__c}" layout="pageDirection" onchange="evalutionChanged(this);">
+            <apex:selectOptions value="{!EvalutionCriteria}"/>
+          </apex:selectRadio>
+      </apex:pageBlockSectionItem>
+      <apex:pageBlockSectionItem >
+        <apex:outputLabel escape="false" value="" />
+                    <a href="javascript:window.open('{!$Page.EvaluationCriteriaExample}');" class="chooseLink" style="font-size:11px;color:#959595;display: inline-block;">How do I choose?</a>
+                    <!-- <a href="javascript:window.open('https://help.salesforce.com/htviewhelpdoc?err=1&id=creating_workflow_rules_configure_settings.htm&siteLang=en_US');" class="chooseLink" style="font-size:11px;color:#959595;display: inline-block;">How do I choose?</a> -->
+                    <!-- <a href="javascript:openPopupFocusEscapePounds(https://help.salesforce.com/htviewhelpdoc?err=1&id=creating_workflow_rules_configure_settings.htm&siteLang=en_US, %27Help%27, 1024, 768, %27width=1024,height=768,resizable=yes,toolbar=yes,status=yes,scrollbars=yes,menubar=yes,directories=no,location=yes,dependant=no%27, false, false);" class="chooseLink" style="font-size:11px;color:#959595;display: inline-block;">How do I choose?</a> -->
+      </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+    <apex:pageBlockSection columns="1" title="Rule Criteria" id="pbSection" rendered="{!!isEditMode}">
+       
+        <apex:outputLabel escape="false" value="Run this rule if following criterias are met." />
+       
+        <apex:variable var="index" value="{!0}" />
+        <apex:pageBlockTable value="{!ruleCriteriaWrapper}" var="item" cellpadding="0px;" cellspacing="0px;">
+                        <apex:column headerValue="Row #" >
+                            <apex:variable var="index" value="{!index+1}" />
+                <apex:outputText escape="false" value="{!index}"/>
+            </apex:column>
+            <apex:column headerValue="Field">
+                <apex:selectList value="{!item.selectedField}" multiselect="false" 
+                size="1" styleClass="brand field{!index}" onChange="setLookupIcon(this.value, '{!index}');">
+                    <apex:selectOptions value="{!item.objFields}"/>
+                </apex:selectList>
+                <input type="hidden" class="hiddenFld{!index}" />
+            </apex:column> 
+            <apex:column headerValue="Operator">
+                <apex:selectList value="{!item.selectedOperator}" multiselect="false" size="1" 
+                    styleClass="Opt{!index}" onChange="checkOperator(this.value, '{!index}');">
+                    <apex:selectOptions value="{!item.operators}"/>
+                </apex:selectList>
+            </apex:column>
+            <apex:column headerValue="Value">
+                <apex:inputText value="{!item.strValue}" onBlur="checkValueInJS(this.value, 'hiddenFld{!index}', 'error{!index}')" styleClass="inputValue{!index}"
+                disabled="{!IF(item.selectedFieldType == 'Picklist' || item.selectedFieldType == 'Checkbox', 'true', 'false')}"/>
+            </apex:column>
+            <apex:column headerValue="">
+                <apex:outputLabel escape="false" value="{!JSENCODE(dateFormate)}" styleClass="dateFormate{!index}" style="display:none;"/>
+                <apex:outputPanel styleClass="lookup{!index}" style="display:none;">
+                    <a href="javascript:fetchFieldValues('.hiddenFld{!index}', {!index});">
+                        <img src="/s.gif" alt="Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" 
+                            onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" 
+                            onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" title="Lookup (New Window)"/>
+                    </a>--
+                </apex:outputPanel>
+                <!--<apex:outputPanel styleClass="lookup{!index}" rendered="{!IF(item.selectedFieldType == 'Picklist' || item.selectedFieldType == 'Checkbox', true, false)}">
+                    <a href="javascript:fetchFieldValues2('{!item.selectedField}', {!index});">
+                        <img src="/s.gif" alt="Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" 
+                            onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" 
+                            onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" title="Lookup (New Window)"/>
+                    </a>-
+                </apex:outputPanel> -->
+            </apex:column>
+        </apex:pageBlockTable>
+        <apex:commandLink onclick="checkLogic(); return false;" value="Add Filter Logic" id="addFilterLogic" /> 
+            <apex:outputPanel id="filterLogic" styleClass="filterLogicSection">
+                <apex:commandLink action="{!addRow}" value="Add Row" id="addRow" rerender="pbSection,msg" status="myStatus" immediate="true"/>&nbsp;&nbsp;
+                <apex:commandLink action="{!removeRow}" value="Remove Row" id="removeRow" rendered="{!ruleCriteriaWrapper.size > 5}" rerender="pbSection,msg" status="myStatus" immediate="true"/>
+                 <apex:outputLabel escape="false" value="Remove Row" rendered="{!ruleCriteriaWrapper.size <= 5}"/> 
+                <br/>
+                <br/>
+                <apex:commandLink onclick="removeLogic(); return false;" value="Clear Filter Logic" id="removeFilterLogic" />
+                <br/>
+                Filter logic:
+                <br/>
+                <apex:inputText value="{!filterLogicCondition}" id="textLogic" size="100"/>
+            </apex:outputPanel>
+                    <script>
+                        jQuery(document).ready(function() {
+                    jQuery('.list').css('width', '70%');
+                    if({!isNotShowAddFilterLogic}){
+                        document.getElementById('pg:frm:pb:pbSection:addFilterLogic').style.display = 'none';
+                      }       
+                    });
+                </script>
+    </apex:pageBlockSection>
+    
+    </apex:pageBlock>
+        <apex:outputPanel >
+            <apex:actionstatus id="myStatus">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                           height: 100%;opacity:0.65;width:100%;"> 
+                        <div class="waitingHolder" style="width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Please Wait...</span>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionstatus>
+       </apex:outputpanel>
+</apex:form>
+<script>
+    jQuery(document).ready(function() {
+             docLoad();
+    });
+
+    function showHideFilter(){
+        if('{!isNotShowAddFilterLogic}' == 'true'){
+            checkLogic();
+        }else{
+            removeLogic();
+        }
+    }
+    
+    function docLoad(){
+        jQuery('.list').css('width', '70%');
+        jQuery('.filterLogicSection').css('display', 'none');
+        jQuery('#all').click(function(){
+        if(jQuery(this).is(':checked')){
+            jQuery('.group').prop("checked",true);
+        }else{
+            jQuery('.group').prop("checked",false);
+        }
+      });
+    }
+
+    function  checkLogic(){
+        var count = 1;
+        var filterCondition = "";
+        jQuery('.brand').each(function(){
+            if(jQuery(this).find('option:selected').text() != '--None--'){
+                if(filterCondition == "")
+                     filterCondition += count; 
+                else
+                    filterCondition += " AND " + count;
+            }
+            count++;
+        });
+        
+        document.getElementById('pg:frm:pb:pbSection:addFilterLogic').style.display = 'none';
+        document.getElementById('pg:frm:pb:pbSection:filterLogic').style.display = 'block';
+        document.getElementById('pg:frm:pb:pbSection:textLogic').value = filterCondition;
+    }
+    
+    function removeLogic(){
+        document.getElementById('pg:frm:pb:pbSection:textLogic').value = '';
+        document.getElementById('pg:frm:pb:pbSection:addFilterLogic').style.display = 'block';
+        document.getElementById('pg:frm:pb:pbSection:filterLogic').style.display = 'none';
+    }
+    
+    function checkValueInJS(val, fldCls, errCls){
+        var selectedField = jQuery('.'+fldCls).val();
+        jQuery('.'+errCls).val('Invalid format');
+        jQuery('.'+errCls).css("display","block");
+    }
+    
+    function checkOptions(theValue, indx){
+        if(theValue == '')
+            jQuery('.Opt'+indx).prop('selectedIndex',0)
+        else if(theValue != '' && jQuery('.Opt'+indx).prop('selectedIndex') == 0){
+            jQuery('.Opt'+indx).prop('selectedIndex',1);
+        }
+        checkOperator(jQuery('.Opt'+indx).val(),indx);
+    }
+    
+    function setLookupIcon(theValue, indx){
+            checkOptions(theValue, indx);
+            var className = '.hiddenFld'+indx;
+            var lookupClass = '.lookup'+indx;
+            var textBoxToDisable = '.inputValue'+indx;
+            var dateFormateClass = '.dateFormate'+indx;
+            
+        var apiName = theValue.split(':')[0];
+        var type =  theValue.split(':')[1];
+        jQuery(className).val(apiName);
+        jQuery(textBoxToDisable).val('');
+        if(type.toUpperCase() == 'PICKLIST' || type.toUpperCase() == 'BOOLEAN'){
+            jQuery(lookupClass).css("display","block");
+            jQuery(textBoxToDisable).attr('readonly', true);
+        }else{
+            jQuery(lookupClass).css("display","none");
+            jQuery(textBoxToDisable).attr('readonly', false);
+        }
+        
+        if(type.toUpperCase() == 'DATE' || type.toUpperCase() == 'DATETIME'){
+            jQuery(dateFormateClass).css("display","block");
+        }else{
+            jQuery(dateFormateClass).css("display","none");
+        }
+    }
+    
+    //-----------------------------------------------------------------------------------------------------------
+    // This function is used to show light box on click of section article link
+    //-----------------------------------------------------------------------------------------------------------   
+    function showLightBox() {
+        document.getElementById('light').style.display = 'block';
+        document.getElementById('fade').style.display = 'block';
+    }
+    //-----------------------------------------------------------------------------------------------------------
+    // This function is used to hide light box on click of Ok button of light box
+    //-----------------------------------------------------------------------------------------------------------   
+    function hideLightBox() {
+        document.getElementById('light').style.display = 'none';
+        document.getElementById('fade').style.display = 'none';
+    }
+    
+    function fetchFieldValues(className, index){
+        if(document.getElementById('pg:frm:pb:pbsectionPrimary:ruleName').value != ''){
+            callAjaxToFetchFieldValues(jQuery(className).val(), parseInt(index));
+        }else{
+            alert('Please enter Rule Name first.');
+        }
+    }
+    
+    
+    function fetchFieldValues2(selectedFieldApiname, index){
+        var fieldApiName = selectedFieldApiname.split(":")[0];
+        callAjaxToFetchFieldValues(fieldApiName, parseInt(index));
+    }
+    
+    function insertSelected(listIndex, picklistSize){
+        if(picklistSize > 0){
+            var index = 0;
+            var commaSeperatedValues = '';
+            jQuery('.group').each(function (){
+                if(jQuery(this).is(':checked')){
+                    commaSeperatedValues += jQuery('.picklistValue'+index).val() + ','; 
+                }
+                index++;    
+            });
+            jQuery('.inputValue'+listIndex).val(commaSeperatedValues);
+        }else{
+            var myradios = document.getElementsByName('{!$Component.myRadio}');
+            alert(myradios.length);
+            for(i = 0; i < myradios.length; i++) 
+                if(myradios[i].checked) {
+                    alert('Selected value is: ' + myradios[i].value);
+                }
+        }
+        hideLightBox();
+    }
+    
+    function checkOperator(op, indx){
+        var fldType = jQuery('.field'+indx).val().split(':')[1];
+        if((op != '=' && op != '!=') && (fldType == "CHECKBOX" || fldType == "BOOLEAN" || fldType == "REFERENCE")){
+            alert('Only two operators equals and not equals are allowed for checkbox and reference type fields..!!');
+            jQuery('.Opt'+indx).prop('selectedIndex',1);
+        }
+        
+        if((op == 'in' || op == 'not in') && (fldType == "CURRENCY" || fldType == "INTEGER" || fldType == "DOUBLE" || fldType == "PERCENT" || fldType == "DATE" || fldType == "DATETIME")){
+            alert('contains and does not contains operators are not allowed for numeric, date and date time fields..!!');
+            jQuery('.Opt'+indx).prop('selectedIndex',1);
+        }
+        
+    }
+    
+    function evalutionChanged(radioBtn){
+        if(radioBtn.value == 'created, and every time it’s edited'){
+            jQuery('.cantAddTimeDependentMsg').css("display","block");
+        }else{
+            jQuery('.cantAddTimeDependentMsg').css("display","none");
+        }
+    }
+    
+</script>
+
+<style>
+        .black_overlay{
+            display: none;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index:100;
+            -moz-opacity: 0.8;
+            opacity:.80;
+            filter: alpha(opacity=80);
+        }
+        .white_content {
+            display: none;
+            position: absolute;
+            top: 30%;
+            left:30%;
+            width: 35%;
+            height: 255px;           
+            background-color: white;
+            z-index:101;
+           resize:both;
+        }
+        .white_content2 {
+            display: none;
+            position: absolute;
+            top: 10%;
+            left:4.5%;
+            width: 92%;
+            height:82%;            
+            background-color: white;
+            z-index:1002;
+           resize:both;
+        }
+    </style>
+</apex:page>

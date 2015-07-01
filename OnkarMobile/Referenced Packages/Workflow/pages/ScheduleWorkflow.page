@@ -1,0 +1,61 @@
+<apex:page controller="CRMG_WF.ScheduleWorkflowController" id="pg">
+    <apex:sectionHeader subTitle="Workflow Setup" />
+    <apex:form id="frm">
+   
+    <apex:pageMessages id="pgMsg"/>
+     <apex:outputPanel >
+    <apex:pageBlock title="Workflow Setup" id="pbb">
+      <apex:outputLabel escape="false" value="To start your Workflow engine, click on the Schedule Workflow button below."/>
+      <br/>
+      <br></br>
+      <apex:pageBlockSection columns="1">
+        <apex:outputPanel style="padding-left: 15%;" id="panel"> 
+            <apex:commandButton id="Schedule" value="Schedule Workflow" action="{!scheduleApex}" 
+                rerender="frm,panel" status="status" disabled="{!isJobSchedule}"/>&nbsp;&nbsp;&nbsp;
+                <apex:commandButton id="ScheduleStop" value="Stop Workflow" action="{!StopscheduleApex}" 
+                rerender="frm,panel" status="status" disabled="{!!isJobSchedule}"/>&nbsp;&nbsp;&nbsp;
+            <!-- <apex:commandButton id="ScheduleLog" value="Schedule Workflow Log Deletion Daily" 
+                action="{!scheduleWorkflowLogDeletion}" rerender="frm" status="status"/>&nbsp;&nbsp;&nbsp;
+            <apex:commandButton id="ScheduleOneTime" value="Schedule Workflow 1 Time Now (For Testing)" 
+                action="{!scheduleWorkflowOneTime}" rerender="frm" status="status"/> -->
+        </apex:outputPanel>
+      </apex:pageBlockSection>
+    </apex:pageBlock> 
+    </apex:outputPanel>
+        <apex:actionstatus id="status">
+        <apex:facet name="start">
+          <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+               height: 100%;opacity:0.65;width:100%;"> 
+            <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+              <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+              <span class="waitingDescription">Please Wait...</span>
+            </div>
+          </div>
+        </apex:facet>
+    </apex:actionstatus>
+    <apex:outputPanel id="pb1">
+        <apex:pageBlock title="Create a New Record Picklist" id="pb">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!saveSetupObjRecord}" value="Save"/> 
+            </apex:pageBlockButtons>    
+            <br/>
+            <apex:pageBlockSection collapsible="false" columns="2" title="Select the Object names that you do NOT want to appear in your pick lists when using the Workflow Action 'Create A New Record'">
+                 <apex:pageBlockSectionItem >
+                      <apex:inputCheckBox value="{!SelectAll}">
+                          <apex:actionSupport action="{!selectAll}" event="onclick" reRender="pb1" status="status"/>
+                      </apex:inputCheckBox>
+                      <apex:outputPanel > <b><apex:outputLabel value="Select All"/></b></apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+                 <br/>
+                <apex:repeat value="{!objects}" var="item">
+                    <apex:pageBlockSectionItem >
+                        <apex:inputCheckBox value="{!item.isSelected}" />
+                        <apex:outputLabel value="{!item.objLabel}" />
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    
+    </apex:outputPanel>
+    </apex:form>
+</apex:page>

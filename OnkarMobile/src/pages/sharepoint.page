@@ -1,0 +1,33 @@
+<apex:page controller="SharePoint2">
+<!--<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-1.10.2.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js')}"/>-->
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript">
+    
+    var soapDataString = "<soap:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body><Login xmlns='http://schemas.microsoft.com/sharepoint/soap/'><username>diegos@bsa.org</username><password>Bs@12345</password></Login></soap:Body></soap:Envelope>"
+    $(function() {
+    	alert("Hello")
+    	 $.ajax({
+	          url: "https://portal.verafirm.org/_vti_bin/authentication.asmx",
+	          type: "POST",
+	          dataType: "xml",
+	          data: soapDataString,
+	          success: resultsFeedback,
+	          error:erro,
+	          contentType: "text/xml; charset=\"utf-8\""
+    	});
+  	});
+   
+    function resultsFeedback(xData, status) {
+       alert(xData);
+       alert(status);
+    }
+    function erro(request, status, error){
+    	alert(request.status);
+    }
+</script>
+<apex:form >
+    <apex:commandButton value="Sharepoint" action="{!sharepointAccess}"/>
+</apex:form>
+</apex:page>

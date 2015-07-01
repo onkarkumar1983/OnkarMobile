@@ -1,0 +1,69 @@
+<apex:page controller="QueryController">
+
+<apex:includeScript value="{!URLFOR($Resource.anjularjs, '/angular-1.2.18/angular.min.js')}"/>
+
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-1.10.2.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js')}"/>
+
+<apex:stylesheet value="{!URLFOR($Resource.bootstrapsfdc, '/bootstrapSfdc/css/SFDCbootstrap.css')}"/>
+
+<apex:includeScript value="{!URLFOR($Resource.bootstrapsfdc, '/bootstrapSfdc/js/bootstrap.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.bootstrapsfdc, '/bootstrapSfdc/js/bootstrap.js')}"/>
+<SCRIPT>
+
+
+angular.module('invoice1', [])
+.controller('InvoiceController', function() {
+  this.qty = 1;
+  this.cost = 2;
+  this.inCurr = 'EUR';
+  this.currencies = ['USD', 'EUR', 'CNY'];
+  this.usdToForeignRates = {
+    USD: 1,
+    EUR: 0.74,
+    CNY: 6.09
+  };
+
+  this.total = function total(outCurr) {
+    return this.convertCurrency(this.qty * this.cost, this.inCurr, outCurr);
+  };
+  this.convertCurrency = function convertCurrency(amount, inCurr, outCurr) {
+    return amount * this.usdToForeignRates[outCurr] / this.usdToForeignRates[inCurr];
+  };
+  this.pay = function pay() {
+    window.alert("Thanks!");
+  };
+});
+
+
+</SCRIPT>
+ <div class="bootstrap-sfdc" style=" background-color: #fff;">
+
+    <div class="panel panel-primary">
+      <div class="panel-heading">Account Result</div>
+      <div class="panel-body" ng-app="invoice1" ng-controller="InvoiceController as invoice">
+      <b>Invoice:</b>
+      <div>
+        Quantity: <input type="number" min="0" ng-model="invoice.qty"/>
+      </div>
+      <div>
+            Costs: <input type="number" min="0" ng-model="invoice.cost"/>
+            <select ng-model="invoice.inCurr">
+                  <option ng-repeat="c in invoice.currencies">{{c}}</option>
+            </select>
+      </div>
+      <div>
+            <b>Total:</b><br/>
+            <span ng-repeat="c in invoice.currencies">
+                  {{invoice.total(c) | currency:c}}<br/>
+            </span>
+     <button class="btn" ng-click="invoice.pay()">Pay</button>
+  </div>
+
+
+
+
+      </div>
+    </div>
+ </div>   
+</apex:page>

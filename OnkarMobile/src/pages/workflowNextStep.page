@@ -1,0 +1,219 @@
+<apex:page docType="html-5.0" extensions="newWorkflowCls" standardController="Workflow__c" title="New Workflow Rule : Account" sidebar="false">
+<apex:includeScript value="{!URLFOR($Resource.anjularjs, '/angular-1.2.18/angular.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-1.10.2.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.bootstrap, '/bootstrap-3.1.1-dist/js/bootstrap.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.bootstrap, '/bootstrap-3.1.1-dist/js/bootstrap.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.bootstrap, '/bootstrap-3.1.1-dist/css/bootstrap.min.css')}"/>
+<style>
+html {
+    font-size: 100%;
+}
+
+body {
+    font-family: 'Arial','Helvetica',sans-serif;
+    font-size: 75%;
+}
+.btn:hover, .btn:focus {
+    color: #333;
+    text-decoration: none;
+}
+</style>
+<apex:form >
+<apex:sectionHeader title="New Workflow Rule" subtitle="Account"/>
+
+
+<div class="alert alert-danger alert-dismissible" role="alert" style="display:{!if(objectError ==true,'block','none')}">
+
+  <button type="button" class="close" data-dismiss="alert">
+ 
+  <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+  <span><strong>Oops! </strong> you forgot to select your Object. Please select an Object, then click on "Next"</span>
+
+</div>
+<div class="panel panel-primary" style="box-shadow: 7px 7px 4px #888888;">
+  <div class="panel-heading" style="height:40px">
+      <h2 class="panel-title">Step 2: Configure Workflow Rule </h2>
+      <h6 class="panel-title navbar-right">Step 2 of 3</h6>
+  </div>
+  <div style=" background-color: #f5f5f5;overflow: hidden;border-bottom: 1px solid #dbdbdb; height:40px;padding: 8px;" align="right">
+   <apex:commandButton value=" Previous " action="{!nextPage}" style="-moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 1px 8px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;   background-color: #428bca;
+    border-color: #357ebd;
+    color: #fff;"/>&nbsp;&nbsp;
+    <apex:commandButton value=" Save & Next " action="{!nextPage}" style="-moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 1px 8px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;   background-color: #428bca;
+    border-color: #357ebd;
+    color: #fff;"/>&nbsp;&nbsp;
+   <apex:commandButton value=" Cancel " style="-moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 1px 8px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;   background-color: #428bca;
+    border-color: #357ebd;
+    color: #fff;"/>
+   
+  </div>
+    <div   style=" background-color: #f5f5f5;border-top: 1px solid #fff;border-bottom: 1px solid #fff; height:40px;padding: 8px;">
+    <p>Enter the name, description, and criteria to trigger your workflow rule. In the next step, associate workflow actions with this workflow rule. </p>
+    </div>
+   
+     <div  style=" background-color: #f5f5f5;border-bottom: 1px solid #fff;border-top: 1px solid #dbdbdb;">
+      <div style="background-color: #DEEFFF;height:23px;color: #27282e;padding-left:.3cm;padding-top:.1cm;color: #27282e;">
+          <strong>Edit Rule </strong>
+      </div>
+      
+    </div>
+   
+    <div  style=" background-color: #f5f5f5;border-bottom: 1px solid #fff;border-top: 1px solid #dbdbdb;padding-left:12px;padding-top:10px">
+        <div style="margin-top: 7px;padding: 0 120px;">
+            <table border="0" style="padding-left:120px;" width="100%">
+                <tr>
+                    <td Style="color: #333;font-size: 91%;font-weight: bold;padding: 2px 10px 2px 2px;text-align: right;">
+                        <apex:outputLabel >Object</apex:outputLabel> 
+                    </td>
+                    <td Style="padding-bottom: 3px;padding-top: 2px;">
+                        Account
+                    </td>
+
+                </tr>
+                 <tr>
+                    <td Style="color: #333;font-size: 91%;font-weight: bold;padding: 2px 10px 2px 2px;text-align: right;">
+                        <apex:outputLabel >Rule Name</apex:outputLabel> 
+                    </td>
+                    <td Style="padding-bottom: 3px;padding-top: 2px;">
+                        <apex:inputField style="width:200px; height:20px" required="true" value="{!Workflow__c.Name}"/>
+                    </td>
+
+                </tr>
+                 <tr>
+                    <td Style="color: #333;font-size: 91%;font-weight: bold;padding: 2px 10px 2px 2px;text-align: right;">
+                        <apex:outputLabel >Description</apex:outputLabel> 
+                    </td>
+                    <td Style="padding-bottom: 3px;padding-top: 2px;">
+                        <apex:inputTextarea style="width:300px; height:100px"/>
+                    </td>
+
+                </tr>
+            </table>
+        </div>
+    </div>
+   <div  style=" background-color: #f5f5f5;border-bottom: 1px solid #fff;border-top: 1px solid #dbdbdb;">
+      <div style="background-color: #DEEFFF;height:23px;color: #27282e;padding-left:.3cm;padding-top:.1cm;color: #27282e;">
+          <strong>Evaluation Criteria </strong>
+      </div>
+       <div style="margin-top: 7px;padding: 0 120px;">
+             <table border="0" style="padding-left:130px;" width="100%">
+                <tr>
+                    <td Style="color: #333;font-size: 91%;font-weight: bold;padding: 2px 10px 2px 2px;text-align: right; word-wrap:break-word" width="20%">
+                        <apex:outputLabel >Evaluate the rule when a record is:</apex:outputLabel> 
+                    </td>
+                    <td Style="padding-bottom: 3px;padding-top: 2px;">
+                        <input type="radio" name="sex" value="male"/> created<br/>
+                        <input type="radio" name="sex" value="male"/> created, and every time it’s edited <br/>
+                        <input type="radio" name="sex" value="male"/> created, and any time it’s edited to subsequently meet criteria<br/>
+                    </td>
+
+                </tr>
+                 
+                
+            </table>
+       </div>
+    </div>
+        <div  style=" background-color: #f5f5f5;border-bottom: 1px solid #fff;border-top: 1px solid #dbdbdb;">
+      <div style="background-color: #DEEFFF;height:23px;color: #27282e;padding-left:.3cm;padding-top:.1cm;color: #27282e;">
+          <strong>Rule Criteria </strong>
+      </div>
+    <div style="margin-top: 7px;padding: 0 40px;">
+         
+       </div>
+    </div>
+    <div class="panel-footer" align="right" style=" background-color: #f5f5f5; height:40px;padding: 8px;">
+      
+    <apex:commandButton value=" Previous " style="-moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 1px 8px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;   background-color: #f0ad4e;
+    border-color: #eea236;
+    color: #fff;"/>&nbsp;&nbsp;
+    
+    <apex:commandButton value=" Save & Next " style="-moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 1px 8px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;   background-color: #f0ad4e;
+    border-color: #eea236;
+    color: #fff;"/>&nbsp;&nbsp;
+    
+     <apex:commandButton value=" Cancel " style="-moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 1px 8px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;   background-color: #f0ad4e;
+    border-color: #eea236;
+    color: #fff;"/>
+    </div>
+</div>
+</apex:form>
+</apex:page>

@@ -1,0 +1,5 @@
+<apex:page sidebar="false" showHeader="false">
+    <script type="text/javascript">
+        window.location="/00U/c?md0=2015&md3=146&cal_lspf=1&isdtp=vw"
+    </script>
+</apex:page>

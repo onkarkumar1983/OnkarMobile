@@ -1,0 +1,23 @@
+<apex:page >
+
+<apex:includeScript value="{!URLFOR($Resource.bootstrapsfdc, '/bootstrapSfdc/js/ui-bootstrap-tpls-0.12.0-1.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.bootstrapsfdc, '/bootstrapSfdc/css/SFDCbootstrap.css')}"/>
+
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-1.10.2.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.anjularjs, '/angular-1.2.18/angular.js')}"/>
+<div ng-app="Demo" ng-controller="customersCtrl">
+<ul>
+  <li ng-repeat="x in names">
+    {{ x.Name + ', ' + x.Country }}
+  </li>
+</ul>
+</div>
+<script type="text/javascript">
+        var app = angular.module( "Demo", [] );
+        app.controller('customersCtrl', function($scope, $http) {
+        $http.get("http://www.w3schools.com/website/Customers_JSON.php")
+            .success(function(response) {$scope.names = response;});
+        });
+</script>
+
+</apex:page>

@@ -1,0 +1,41 @@
+<apex:page standardController="Account">
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-1.10.2.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.JQUery, '/jquery-ui-1.10.4.custom/css/smoothness/jquery-ui-1.10.4.custom.css')}"/>
+
+    
+<script>
+    $(document).ready(function(){
+       
+    });
+    function showDilog(){
+     $( "#dialog" ).dialog({
+               autoOpen: true,
+               modal:true,
+               title:'Add Account'
+     });
+    }
+</script>
+    <apex:form >
+       
+        <apex:pageBlock >
+        
+                <apex:pageBlockButtons >
+                    <apex:commandButton value="Dilog" onclick="showDilog(); return false;"/>
+                </apex:pageBlockButtons>
+         
+        </apex:pageBlock>
+   </apex:form>
+      <div id="dialog" title="Dialog Title goes here..." style="display:block">
+      <apex:form >
+              <apex:pageBlock >
+                  <apex:pageBlockButtons location="bottom">
+                      <apex:commandButton value="Save" action="{!save}"/>
+                  </apex:pageBlockButtons>
+                  <apex:pageBlockSection >
+                  <apex:inputField value="{!Account.Name}"/>
+                  </apex:pageBlockSection>
+              </apex:pageBlock>
+      </apex:form>        
+          </div>
+</apex:page>

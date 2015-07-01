@@ -1,0 +1,18 @@
+<apex:page controller="Myclass">
+<apex:sectionHeader title="Welcome" subtitle="My Page"/>
+<apex:form >
+    <apex:pageBlock >
+        <apex:pageBlockButtons location="Bottom">
+            <apex:commandButton value="Save" action="{!Save}"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection >
+            <apex:pageBlockSectionItem >
+                <apex:inputText value="{!Name}"/>
+                <apex:inputText value="{!Phone}"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+
+</apex:form>
+
+</apex:page>

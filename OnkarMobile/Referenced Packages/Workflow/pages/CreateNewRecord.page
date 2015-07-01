@@ -1,0 +1,261 @@
+<apex:page extensions="CRMG_WF.TestSObjectDescribeResultInfo" id="pg" standardController="CRMG_WF__Workflow__c">
+<apex:includeScript value="{!URLFOR($Resource.CRMG_WF__JQUery, '/jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.CRMG_WF__JQUery, '/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.CRMG_WF__JQUery, '/jquery-ui-1.10.3.custom/css/JQuery19/jquery-ui-1.10.3.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.CRMG_WF__JQUery, '/jquery-ui-1.10.3.custom/css/jquery-ui-1.10.3.custom.min.css')}"/>
+  
+<script>
+    
+    
+    function openLookup1(obj,obj1){
+    //alert(obj1);
+     var win = window.open("/apex/lookuprecordType?object="+obj1+"&parentId="+obj,"_blank","toolbar=no, scrollbars=yes, resizable=yes, top=500, left=500, width=400, height=400");
+   
+    }
+</script>
+<!-- -->
+ <style>
+
+       .ui-autocomplete {
+        max-height: 500px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+     
+    html .ui-autocomplete {
+        height: 500px;
+    } 
+.ui-autocomplete-category {
+    font-weight: bold;
+    padding: .2em .4em;
+    margin: .8em 0 .2em;
+    line-height: 1.5;
+    max-height: 100px; overflow-y: auto; overflow-x: hidden;
+}
+
+</style>
+<script>
+ var obj = eval({!ObjectJSon});
+    $j =jQuery.noConflict();
+            $j.widget( "custom.catcomplete", $j.ui.autocomplete,{
+            _create: function() {
+             this._super();
+            
+                this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+             },
+            _renderMenu: function( ul, items ) {
+                var that = this,
+                currentCategory = "";
+                $j.each( items, function( index, item ) {
+                    var li;
+                    if ( item.category != currentCategory ) {
+                        ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+                        currentCategory = item.category;
+                    }
+                    li = that._renderItemData( ul, item );
+                    if ( item.category ) {
+                        li.attr( "aria-label", item.category + " : " + item.label );
+                    }
+                });
+            }
+          
+    });
+</script>
+<script>
+            $j(function() {
+               
+                var Array = [];
+                for(var i=0;i<obj.length;i++){
+                     
+                     var res = obj[i].Label.split(":");  
+                     var item = {
+                                    "label": obj[i].Label,
+                                    "category": res[0],
+                                    "value": obj[i].value
+                                };
+    
+                    
+                    
+                    Array.push(item)
+                }
+                 var data = Array;
+              //  alert(data);
+                /*[
+                            { label: "anders", category: "" },
+                            { label: "andreas", category: "" },
+                            { label: "antal", category: "" },
+                            { label: "annhhx10", category: "Products" },
+                            { label: "annk K12", category: "Products" },
+                            { label: "annttop C13", category: "Products" },
+                            { label: "anders andersson", category: "People" },
+                            { label: "andreas andersson", category: "People" },
+                            { label: "andreas johnson", category: "People" }
+                            ];*/
+                            $j('[id*=search]').catcomplete({
+                          
+                                    delay: 0,
+                                    minLength: 0,
+                                    source: data,
+                                  select: function( event, ui ){
+                                    var objName = '{!objStringValue}';
+                                    var mergeValue = "{" + objName + "." + ui.item.value+ "}";
+                                    //var mergeValue = "{" + ui.item.value +"}";
+                                    document.getElementById('mergeInput').value = mergeValue;
+                                    document.getElementById('mergeInput').focus();
+                                       
+                                  }
+                            });
+            });
+         
+</script>
+<!-- -->
+<apex:sectionHeader title="Workflow Action" subtitle="New Record"/>
+    <apex:form id="frm">
+
+    <apex:actionFunction name="getObjectJSon" action="{!getObjectJSon}"/>
+   
+    
+    
+        <apex:pageMessages />
+        <apex:pageBlock id="pb">
+          <apex:pageBlockSection columns="1" title="Name your Workflow Action" collapsible="false" id="String">
+            <apex:inputField value="{!action.CRMG_WF__Description__c}" required="true" style="width:300px;height:15px; padding: 2px"/>
+          </apex:pageBlockSection>
+        <!--
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton action="{!saveInfo}" value="Save" rendered="{!IF(fieldSetSize != null && fieldSetSize > 0 , true, false)}"/>
+            <apex:commandButton action="{!doCancel}" value="Cancel" />
+        </apex:pageBlockButtons> -->
+        <apex:pageBlockSection columns="1" title="Step 1. Select Your Target Object/Location To Create A New Record" collapsible="false" id="String_1">
+            <apex:pageBlockSectionItem >
+            <apex:outputLabel style="margin-top: 13px;">Target Object/Location</apex:outputLabel>
+            <apex:selectList id="selectedObject" value="{!selectedObject}" onchange="updateFieldsSection();" size="1" style="width : 300px;height:20px;">
+              <apex:selectOptions value="{!childSobjects}"/>
+          </apex:selectList>
+          </apex:pageBlockSectionItem>
+            <apex:actionFunction name="updateFieldsSection" action="{!renderCorrespondingFieldSets}" rerender="flds" status="status"/>
+          </apex:pageBlockSection>
+
+         <apex:pageBlockSection columns="1" title="Step 2. Select The Fields To Merge From Your Source Object" collapsible="false" id="String_2">
+           <apex:pageBlockSectionItem rendered="{!FieldUpdateDropDown}">
+             <apex:outputLabel >
+               Select source field name here:
+               
+             </apex:outputLabel>
+             <apex:selectList id="selectedMergeFields" onchange="updateInputTextForMerField(this.value);"
+                                      size="1" style="width : 300px;margin-top: 13px;">
+              <apex:selectOptions value="{!objFieldsList}"/> 
+            </apex:selectList>
+           </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!FieldUpdateDropDown}">
+             <apex:outputLabel >
+                 Source Field Name
+             </apex:outputLabel>
+              <apex:inputText id="search" style="width: 300px;"/>
+           </apex:pageBlockSectionItem>
+           <apex:pageBlockSectionItem >
+               <apex:outputLabel ></apex:outputLabel>
+              <input id="mergeInput" type="text" name="theTextInput" style="width : 300px;"></input>
+               </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem rendered="{!!FieldUpdateDropDown}">     
+              <span style="margin-top: 13px;"> <b>Step 3</b>. Copy the merge field value from this text box (<b style="vertical-align:inherit;">Source Object</b>) 
+                  and paste to the desired field below (<b style="vertical-align:inherit;">Target Object</b>). </span>
+           </apex:pageBlockSectionItem>
+      <!--    <table border="1">
+          <tr><td>
+          <apex:selectList id="selectedMergeFields" onchange="updateInputTextForMerField(this.value);"
+                                    size="1" style="margin-top: 13px;margin-left: 15px;" rendered="{!FieldUpdateDropDown}">
+           <apex:selectOptions value="{!objFieldsList}"/> 
+          </apex:selectList>
+          
+          <apex:outputPanel rendered="{!Autocomplete}">
+          <apex:outputLabel > &nbsp;Start typing the source field name here: &nbsp;</apex:outputLabel>
+          <apex:inputText id="search" style="width: 300px;"/>
+          </apex:outputPanel>
+          </td></tr>
+          <tr><td>
+          <input id="mergeInput" type="text" name="theTextInput" style="width : 300px;margin-top: 13px;margin-left: 15px;">&nbsp;&nbsp; 
+          <span style="margin-top: 13px;"> <b>Step 3</b>. Copy the merge field value from this text box (<b style="vertical-align:inherit;">Source Object</b>) 
+          and paste to the desired field below (<b style="vertical-align:inherit;">Target Object</b>). </span></input>
+          </td></tr>
+          <tr height="20px"><td></td></tr>
+          </table> -->
+           </apex:pageBlockSection>
+<!--
+          <div class="pbSubheader brandTertiaryBgr tertiaryPalette"> &nbsp;<h3>   Insert Field Values</h3></div>
+          <table>
+            <apex:repeat value="{!mapFieldValues}" var="apiName">
+                <tr><td>
+                    <apex:outputlabel value="{!mapFieldsAndLabels[apiName]}" style="margin-left: 15px;"/>
+!--                    <input  type="text" style="width : 200px;" value="{!mapFieldValues[apiName]}"/> --
+                    <apex:inputText value="{!mapFieldValues[apiName]}" />
+                </td></tr>
+                
+            </apex:repeat>
+          </table>
+         --> 
+
+         <apex:outputPanel id="flds">
+         <apex:pageBlockSection columns="2" title="Insert Field Values {!ThirdHeaderMessage}" collapsible="false">
+        
+            <apex:repeat value="{!mapFieldValues}" var="apiName">
+                <apex:pageBlockSectionItem >
+                    <apex:outputlabel value="{!mapFieldsAndLabels[apiName]}" />
+<!--                    <input  type="text" style="width : 200px;" value="{!mapFieldValues[apiName]}"/> -->
+                   
+                   <apex:outputPanel >
+                     <apex:inputText value="{!mapFieldValues[apiName]}" id="msgpost" style="width: 200px; padding: 2px"/>
+                      <apex:outputPanel rendered="{!If(apiName ='RecordTypeId',true,false)}">
+                      <span class="lookupInput"><a href="javascript:openLookup1('{!$Component.msgpost}','{!selectedObject}')" id="con4_lkwgt" onclick="setLastMousePosition(event)" tabindex="4" title="Account Name Lookup (New Window)"><img src="/s.gif" alt="Account Name Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" title="Account Name Lookup (New Window)"/></a></span>
+                      </apex:outputPanel>
+                    </apex:outputPanel>
+                  </apex:pageBlockSectionItem>
+                  
+                 
+            </apex:repeat>
+           
+           
+      </apex:pageBlockSection>
+      </apex:outputPanel>
+      <apex:pageBlockSection columns="1">
+       <span style="color: red; font-size: 10pt">Tips for Using "Create A New Record"
+            <ol>
+            <li>You <b>MUST</b> include ALL REQUIRED fields in your Field Set</li>
+            <li>If you manually type in a value to a text or picklist field, you do NOT need to add brackets</li>
+            <li>If you are on Enterprise, Unlimited or Performance Edition, and you are using Record Types on your Target Object, you must include the Record Type field in the default Field Set</li>
+            </ol>
+            </span>
+      </apex:pageBlockSection>
+      
+          <apex:outputPanel >
+              <table><tr height="30px"><td></td></tr></table>
+              <center style="margin-left: -70px;">
+              <apex:commandButton action="{!saveInfo}" value="Save"/>
+              <apex:commandButton action="{!doCancel}" value="Cancel" />
+              </center>
+          </apex:outputPanel>
+      </apex:pageBlock>
+      <apex:actionstatus id="status">
+        <apex:facet name="start">
+          <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+               height: 100%;opacity:0.65;width:100%;"> 
+            <div class="waitingHolder" style="top: 74.2px; width: 93px;">
+              <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+              <span class="waitingDescription">Please Wait...</span>
+            </div>
+          </div>
+        </apex:facet>
+    </apex:actionstatus>
+    
+    <script>
+            function updateInputTextForMerField(picklistValue){
+               
+                var objName = '{!objStringValue}';
+                var mergeValue = "{" + objName + "." + picklistValue + "}";
+                document.getElementById('mergeInput').value = mergeValue;
+                document.getElementById('mergeInput').focus();
+            }
+     </script>
+    </apex:form>
+</apex:page>

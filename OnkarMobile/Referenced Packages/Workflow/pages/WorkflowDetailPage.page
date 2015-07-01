@@ -1,0 +1,120 @@
+<apex:page extensions="CRMG_WF.WorkflowDetailController" id="pg" standardController="CRMG_WF__Workflow__c">
+<apex:sectionHeader title="Workflow Rule" subtitle="{!workflow.Name}"/>
+<apex:form id="frm">
+<apex:pageMessages id="msg"/>
+        <apex:outputPanel >
+            <apex:actionstatus id="status">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                           height: 100%;opacity:0.65;width:100%;"> 
+                        <div class="waitingHolder" style="width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Please Wait...</span>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionstatus>
+       </apex:outputpanel>
+       <div class="ptBreadcrumb">&nbsp;«&nbsp;<apex:commandLink action="{!redirectToList}">Back to Workflow List</apex:commandLink></div>
+       <br></br>
+<apex:pageBlock title="Workflow Rule Detail" id="pb">
+    <apex:pageBlockButtons location="top">
+        <apex:commandButton action="{!edit}" value="Edit" rendered="{!!workflow.CRMG_WF__isActive__c}"/>
+        <apex:commandButton action="{!delete}" value="Delete" rendered="{!!workflow.CRMG_WF__isActive__c}"/>
+        <apex:commandButton action="{!activateWf}" value="Activate" rendered="{!!workflow.CRMG_WF__isActive__c}"/>
+        <apex:commandButton action="{!deactivateWf}" value="Deactivate" rendered="{!workflow.CRMG_WF__isActive__c}"/>
+         <apex:commandButton action="{!openClonePage}" value="Clone"/>
+        <apex:commandButton action="{!executeNow}" value="Execute Now" rendered="{!AND(workflow.CRMG_WF__isActive__c,ExecuteNow)}" rerender="msg" status="status"/>
+<!--        <a href="{!$Page.ScheduleWorkflow}" style="float:right;"> Manage Executions Schedules</a>-->
+    </apex:pageBlockButtons>    
+   
+    <apex:pageBlockSection columns="2">
+        <apex:outputField value="{!workflow.Name}"/>
+        <apex:outputField value="{!workflow.OwnerId}"/>
+        <apex:outputField value="{!workflow.CRMG_WF__isActive__c}"/>
+        <apex:outputField value="{!workflow.CRMG_WF__Object__c}" rendered="{!OR(ISBLANK(workflow.CRMG_WF__Object_Label__c), ISNULL(workflow.CRMG_WF__Object_Label__c))}"/>
+        <apex:outputField value="{!workflow.CRMG_WF__Object_Label__c}" rendered="{!NOT(OR(ISBLANK(workflow.CRMG_WF__Object_Label__c), ISNULL(workflow.CRMG_WF__Object_Label__c)))}"/>
+        <apex:outputField value="{!workflow.CRMG_WF__Description__c}"/>
+        <apex:pageBlockSectionItem rendered="{!If(workflow.CRMG_WF__Evaluation_Criteria__c = 'created, and any time it’s edited to subsequently meet criteria','false','true')}">
+            <apex:outputLabel escape="false" value="Evaluation Criteria"/>
+            <apex:outputLabel escape="false" value="Evaluate the rule when a record is {!JSENCODE(workflow.CRMG_WF__Evaluation_Criteria__c)}"/>
+           
+            
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!If(workflow.CRMG_WF__Evaluation_Criteria__c = 'created, and any time it’s edited to subsequently meet criteria','true','false')}">
+          <apex:outputLabel escape="false" value="Evaluation Criteria"/> 
+         <apex:outputLabel escape="false" value="Any time the criteria is met.Created and or Edited is not a factor. This criteria is Ideal for 'Mass Updates'"/>
+         </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+    <apex:pageBlockSection columns="1">
+        <apex:outputField value="{!workflow.CRMG_WF__Rule_Criteria_Labled__c}"/>
+    </apex:pageBlockSection>
+    <apex:pageBlockSection columns="2">
+        <apex:outputField value="{!workflow.CreatedById}"/>
+        <apex:outputField value="{!workflow.LastModifiedById}"/>
+        <apex:outputField value="{!workflow.CreatedDate}"/>
+        <apex:outputField value="{!workflow.LastModifiedDate}"/>
+    </apex:pageBlockSection>
+</apex:pageBlock>
+<apex:pageBlock title="Workflow Actions" id="pba">
+        <!-- ALL IMIDIATE ACTIONS ARE BELLOW -->
+        <apex:pageBlockSection columns="1" title="Immediate Workflow Actions" id="immediateTriggerSection" collapsible="false">
+        <apex:repeat value="{!listWorkFlowTriggers}" var="item">
+            <apex:pageBlock rendered="{!item.triggerObj.CRMG_WF__IsImmediate__c}">
+                <apex:outputLabel escape="false" value="No workflow actions have been added." rendered="{!item.availableActions.size == 0}"/>
+                <apex:pageBlockTable rendered="{!item.availableActions.size > 0}" value="{!item.availableActions}" var="innerItem">
+                                    <apex:column headerValue="Type">
+                        <apex:outputLabel escape="false" value="{!JSENCODE(innerItem.action__r.CRMG_WF__Action_Type__c)}"/>
+                    </apex:column>
+                      <apex:column headerValue="Desctiption" >
+                        <a href="/{!innerItem.CRMG_WF__Action__c}?retURL=/{!item.workFlowId}" target="_blank">
+                        {!IF(innerItem.action__r.CRMG_WF__Action_Type__c == 'Email Alert', innerItem.action__r.CRMG_WF__Description__c, IF(innerItem.action__r.CRMG_WF__Action_Type__c == 'Task', innerItem.action__r.CRMG_WF__tSubject__c ,innerItem.action__r.CRMG_WF__Unique_Name__c))}
+                        </a>
+                      </apex:column>
+                      <apex:column headerValue="Record Count">
+                        <apex:outputLabel escape="false" value="{!FLOOR(innerItem.CRMG_WF__noOfRecordsProcessed__c)}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+        </apex:repeat>
+    </apex:pageBlockSection>
+        
+        <!-- ALL TIME DEPENDENT ACTIONS ARE BELLOW -->
+    <apex:pageBlockSection columns="1" title="Time-Dependent Workflow Actions" id="triggerSection" collapsible="false">
+        <apex:facet name="header">
+            Time-Dependent Workflow Actions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="%23" class="exampleLink" onclick="setLastMousePosition(event);openPopupFocus('{!URLFOR($Resource.WFResources, 'actions_example.png')}', 'jsOpen', 686,582,'width=686,height=600,resizable=yes,toolbar=no,status=no,scrollbars=yes,menubar=no,directories=no,location=no,dependant=no', true, false);return false;" title="See an example (New Window)">See an example</a>
+        </apex:facet>
+        <!-- Removed on Client request, he don't need this message
+        <apex:pageMessage severity="warning" rendered="{!listWorkFlowTriggers.size == 0}" 
+         title="No workflow actions have been added. Before adding a workflow action, you must have at least one time trigger defined."/>
+        -->
+        <apex:outputLabel escape="false" rendered="{!AND(listWorkFlowTriggers.size <= 1, workflow.CRMG_WF__Evaluation_Criteria__c != 'created, and every time it’s edited')}" value="No workflow actions have been added. Before adding a workflow action, you must have at least one time trigger defined."/>
+        <apex:outputLabel escape="false" rendered="{!workflow.CRMG_WF__Evaluation_Criteria__c == 'created, and every time it’s edited'}" >
+                    You cannot add time-dependent workflow actions because your evaluation criteria is Every time a record is created or edited.
+                    &nbsp;&nbsp;
+                    <a href="#" class="exampleLink" onclick="openEditPage();" title="Change Evaluation Criteria">Change Evaluation Criteria</a>
+                </apex:outputLabel>
+        <apex:repeat value="{!listWorkFlowTriggers}" var="item" rendered="{!workflow.CRMG_WF__Evaluation_Criteria__c != 'created, and every time it’s edited'}">
+            <apex:pageBlock rendered="{!NOT(item.triggerObj.CRMG_WF__IsImmediate__c)}" title="{!item.numberOfDays} {!item.triggerObj.CRMG_WF__Days_Hours__c} {!item.triggerObj.CRMG_WF__After_Before__c} {!item.dateFieldLabel}">
+                <apex:outputLabel escape="false" value="No workflow actions have been added to this time trigger." rendered="{!item.availableActions.size == 0}"/>
+                <apex:pageBlockTable rendered="{!item.availableActions.size > 0}" value="{!item.availableActions}" var="innerItem">
+                    <apex:column headerValue="Type">
+                        <apex:outputLabel escape="false" value="{!JSENCODE(innerItem.action__r.CRMG_WF__Action_Type__c)}"/>
+              </apex:column>
+              <apex:column headerValue="Desctiption" >
+                <a href="/{!innerItem.CRMG_WF__Action__c}?retURL=/{!item.workFlowId}" target="_blank">
+                {!IF(innerItem.action__r.CRMG_WF__Action_Type__c == 'Email Alert', innerItem.action__r.CRMG_WF__Description__c, IF(innerItem.action__r.CRMG_WF__Action_Type__c == 'Task', innerItem.action__r.CRMG_WF__tSubject__c ,innerItem.action__r.CRMG_WF__Unique_Name__c))}
+                </a>
+              </apex:column>
+              <apex:column headerValue="Record Count">
+                        <apex:outputLabel escape="false" value="{!FLOOR(innerItem.CRMG_WF__noOfRecordsProcessed__c)}"/>
+              </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+        </apex:repeat>
+    </apex:pageBlockSection>
+</apex:pageBlock>
+<apex:actionFunction name="openEditPage" action="{!openEditPage}" status="status"/>
+</apex:form>
+</apex:page>

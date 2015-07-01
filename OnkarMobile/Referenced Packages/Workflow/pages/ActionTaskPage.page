@@ -1,0 +1,533 @@
+<apex:page standardController="CRMG_WF__Action__c" extensions="CRMG_WF.ActionController" tabStyle="CRMG_WF__Action__c" id="pg" action="{!redirectAction}">
+<!--<apex:includeScript value="{!URLFOR($Resource.WFResources, 'js/jquery-1.7.2.min.js')}"/> -->
+<apex:includeScript value="{!URLFOR($Resource.CRMG_WF__JQUery, '/jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.CRMG_WF__JQUery, '/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.CRMG_WF__JQUery, '/jquery-ui-1.10.3.custom/css/JQuery19/jquery-ui-1.10.3.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.CRMG_WF__JQUery, '/jquery-ui-1.10.3.custom/css/jquery-ui-1.10.3.custom.min.css')}"/>
+<apex:sectionHeader subTitle="{!IF(isSelectExisting, 'Select Existing Workflow Types','New '+recordTypeName)}"/>
+ <style>
+
+       .ui-autocomplete {
+        /* max-height: 500px;*/
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+     
+    html .ui-autocomplete {
+       /* height: 500px;*/
+    } 
+.ui-autocomplete-category {
+    font-weight: bold;
+    padding: .2em .4em;
+    margin: .8em 0 .2em;
+    line-height: 1.5;
+    max-height: 100px; overflow-y: auto; overflow-x: hidden;
+}
+
+</style>
+<script>
+
+    $j =jQuery.noConflict();
+            $j.widget( "custom.catcomplete", $j.ui.autocomplete,{
+            _create: function() {
+             this._super();
+            
+                this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+             },
+            _renderMenu: function( ul, items ) {
+                var that = this,
+                currentCategory = "";
+                $j.each( items, function( index, item ) {
+                    var li;
+                    if ( item.category != currentCategory ) {
+                        ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+                        currentCategory = item.category;
+                    }
+                    li = that._renderItemData( ul, item );
+                    if ( item.category ) {
+                        li.attr( "aria-label", item.category + " : " + item.label );
+                    }
+                });
+            }
+          
+    });
+</script>
+<script>
+            //$j( document ).ready(function() {
+            function executeJQuery(obj1){
+                var obj = eval({!ObjectJSon});
+               
+                var Array = [];
+                for(var i=0;i<obj.length;i++){
+                     
+                     var res = obj[i].Label.split(":");  
+                     var item = {
+                                    "label": obj[i].Label,
+                                    "value": obj[i].value
+                                };
+    
+                    
+                    
+                    Array.push(item)
+                }
+                var data = Array;
+      
+                            $j('[id*=search]').autocomplete({
+                                   
+                                    delay: 0,
+                                    minLength: 0,
+                                    source: data,
+
+                                  select: function( event, ui ){
+                                   document.getElementById(obj1.id).value = ui.item.value;
+                                   fieldChanged();
+                                  }
+                            });
+            //});
+            }
+            function executeJQueryEmail(obj1){
+             
+                var obj = eval({!ObjectJSonEmail});
+             
+                var Array = [];
+                for(var i=0;i<obj.length;i++){
+                     
+                     //var res = obj[i].Label.split(":");  
+                     var item = {
+                                    "label": obj[i].Name,
+                                    "category": '-----',
+                                    "value": obj[i].Id
+                                };
+    
+                    
+                    
+                    Array.push(item)
+                }
+                var data = Array;
+              //  alert(data);*/
+               /*var data = 
+                            [
+                            { label: "anders", category: "" },
+                            { label: "andreas", category: "" },
+                            { label: "antal", category: "" },
+                            { label: "annhhx10", category: "Products" },
+                            { label: "annk K12", category: "Products" },
+                            { label: "annttop C13", category: "Products" },
+                            { label: "anders andersson", category: "People" },
+                            { label: "andreas andersson", category: "People" },
+                            { label: "andreas johnson", category: "People" }
+                            ];*/
+                            $j('[id*=searchEmail]').catcomplete({
+                                   
+                                    delay: 0,
+                                    minLength: 0,
+                                    source: data,
+
+                                  select: function( event, ui ){
+                                   
+                                   document.getElementById(obj1.id).value = ui.item.label;
+                                   //document.getElementById(obj1.id+"_1").value = ui.item.value;
+                                  }
+                            });
+            //});
+            }
+         
+</script>
+  <script type="text/javascript">
+    function disableButtons(){
+        if('{!JSENCODE(action.CRMG_WF__Object__c)}' != ''){
+          document.getElementById('pg:frm:pbb:pbb:save').className = 'btnDisabled';
+          document.getElementById('pg:frm:pbb:pbb:save').disabled = 'true';
+          if('{!isSelectExisting}' != 'true'){
+            document.getElementById('pg:frm:pbb:pbb:saveNew').className = 'btnDisabled';
+            document.getElementById('pg:frm:pbb:pbb:saveNew').disabled = 'true';
+          }
+      }else{
+          document.getElementById('pg:frm:pbb:pbb:next').className = 'btnDisabled';
+          document.getElementById('pg:frm:pbb:pbb:next').disabled = 'true';
+      }
+      document.getElementById('pg:frm:pbb:pbb:cancel').className = 'btnDisabled';
+      document.getElementById('pg:frm:pbb:pbb:cancel').disabled = 'true';
+    }
+    
+    function recipFindJS(){
+        var searchTerm = document.getElementById('pg:frm:pbb:eRecipSearchTerm').value;
+        recipFind(searchTerm);
+    }
+    function workflowActionFindJS(){
+        var searchTerm = document.getElementById('pg:frm:pbb:exWfActnSearchTerm').value;
+        workflowActionFind(searchTerm);
+    }
+    function radioChanged(val){
+      //  alert(val)
+        if(val == 'hardcode'){
+            
+              if(document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeText') != null){
+                document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeText').style.display = 'block';
+              }
+              if(document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeTextLabel') != null){
+                 document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeTextLabel').style.display = 'block';
+              }
+              if(document.getElementById('pg:frm:pbb:pbs:datePbsi') != null){
+                  document.getElementById('pg:frm:pbb:pbs:datePbsi').style.display = 'none';
+              }
+              document.getElementById('pg:frm:pbb:pbs:pbsi_1:copy').style.display = 'none';
+              document.getElementById('pg:frm:pbb:pbs:pbsi_1:copyLabel').style.display = 'none';
+              
+              document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeText').value = '';
+        }else if(val == 'formula'){
+              document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeTextLabel').style.display = 'none';
+              document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeText').style.display = 'none';
+              document.getElementById('pg:frm:pbb:pbs:datePbsi').style.display = 'block';
+              //document.getElementById('pg:frm:pbb:pbs:pbsi_1:copy').style.display = 'none';
+              //document.getElementById('pg:frm:pbb:pbs:pbsi_1:copyLabel').style.display = 'none';
+              document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeText').value = '';
+        }
+        else if(val == 'CopyPaste'){
+          if(document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeTextLabel') != null ){
+            document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeTextLabel').style.display = 'none';
+          }
+          if(document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeText') != null ){
+           document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeText').style.display = 'none';
+          }
+          if(document.getElementById('pg:frm:pbb:pbs:owner') != null){
+            document.getElementById('pg:frm:pbb:pbs:owner').style.display = 'none';
+          }
+          
+          if(document.getElementById('pg:frm:pbb:pbs:owner:ownerIdlabel') != null){
+              document.getElementById('pg:frm:pbb:pbs:owner:ownerIdlabel').style.display = 'none';
+          }
+          
+          if(document.getElementById('pg:frm:pbb:pbs:owner:ownerId') != null){
+              document.getElementById('pg:frm:pbb:pbs:owner:ownerId').style.display = 'none';
+          }
+
+
+          document.getElementById('pg:frm:pbb:pbs:pbsi_1:copy').style.display = 'block';
+          document.getElementById('pg:frm:pbb:pbs:pbsi_1:copyLabel').style.display = 'block';
+        }
+        else if(val == 'hardcodelookup'){
+            if(document.getElementById('pg:frm:pbb:pbs:owner:ownerIdlabel') != null){
+               document.getElementById('pg:frm:pbb:pbs:owner:ownerIdlabel').style.display = 'block';
+            }
+            if(document.getElementById('pg:frm:pbb:pbs:owner:ownerId') != null ){
+               document.getElementById('pg:frm:pbb:pbs:owner:ownerId').style.display = 'block';
+            }
+            if(document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeText') != null){
+                document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeText').style.display = 'block';
+              }
+              if(document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeTextLabel') != null){
+                 document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeTextLabel').style.display = 'block';
+              }
+          
+           document.getElementById('pg:frm:pbb:pbs:pbsi_1:copy').style.display = 'none';
+           document.getElementById('pg:frm:pbb:pbs:pbsi_1:copyLabel').style.display = 'none';
+        }
+        else{
+          document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeTextLabel').style.display = 'none';
+           //document.getElementById('pg:frm:pbb:pbs:pbsi_1:copy').style.display = 'none';
+            //document.getElementById('pg:frm:pbb:pbs:pbsi_1:copyLabel').style.display = 'none';
+          document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeText').style.display = 'none';
+          document.getElementById('pg:frm:pbb:pbs:datePbsi').style.display = 'none';
+          document.getElementById('pg:frm:pbb:pbs:pbsi:hardCodeText').value = val;
+        }
+    }
+    
+    function DeveloperNameInputElement(){}DeveloperNameInputElement.setName=function(d){
+        var g = 'ActionFieldUpdate';
+        var c=document.getElementById(jQuery('.UniqueNameField').attr('id'));
+        var a="",e=!1,f=!1;
+        if(null!==c&&0==c.value.length&&0<d.length){
+            for(i=0;i<d.length;i++){
+                var b=d.charAt(i);
+                "a"<=b&&"z">=b||"A"<=b&&"Z">=b||"0"<=b&&"9">=b ? 
+                    (!e&&("0"<=b&&"9">=b)&&(a+="X"),a+=b,e=!0,f=!1)
+                : e&&!f&&(a+="_",f=!0)}e ? 
+                        (c.maxLength&&0<c.maxLength&&(a=a.substr(0,c.maxLength)),c.value=f ? a.substring(0,a.length-1) : a ) 
+                        : c.value=g
+            }
+            return!0
+    };
+  </script>
+  <apex:form id="frm">
+    <apex:pageMessages id="pgMsg"/>
+    <!-- Command Buttons -->
+    <apex:pageBlock title="{!IF(isSelectExisting, '','Configure '+recordTypeName)}" id="pbb">
+      <apex:pageBlockButtons location="{!IF(AND(!isNULL(action.CRMG_WF__Object__c),OR(recordTypeName = 'Field Update',recordTypeName = 'Email Alert',recordTypeName = 'Task')), 'both', 'top')}" id="pbb">
+        <span style="{!IF(recordTypeName = 'Task', 'float: right;', '')}">
+        <apex:commandButton id="next" value="Next" onclick="disableButtons();" 
+                oncomplete="next();" rendered="{!isNULL(action.CRMG_WF__Object__c)}"
+                status="status"/>
+        <apex:commandButton id="save" value="Save" onclick="disableButtons();" 
+                    oncomplete="save('false');" rendered="{!!isNULL(action.CRMG_WF__Object__c)}"
+                    status="status"/>
+        <apex:commandButton id="saveNew" value="Save & New" onclick="disableButtons();" 
+                oncomplete="save('true');" rendered="{!AND(!isNULL(action.CRMG_WF__Object__c),NOT(isSelectExisting))}"
+                status="status"/>
+        <apex:commandButton id="cancel" value="Cancel" onclick="disableButtons();" 
+                oncomplete="cancel();" status="status"/>
+        </span>
+      </apex:pageBlockButtons>
+        <!-- End Command Buttons -->
+      
+    <!-- Common Object Name Selection Section -->
+    
+    <apex:outputPanel id="pb0" rendered="{!isNULL(action.CRMG_WF__Object__c)}">
+        <apex:pageBlockSection columns="2" title="Select Object" collapsible="false">
+            <apex:selectList id="selectedObject" value="{!action.CRMG_WF__Object__c}" size="1" required="true">
+              <apex:selectOptions value="{!sObjects}"/>
+          </apex:selectList>
+      </apex:pageBlockSection>
+    </apex:outputPanel>
+     <!-- End Common Object Name Selection Section -->
+     
+    <!-- For Task Record Type -->
+      <apex:outputPanel id="pb1" rendered="{!AND(!isNULL(action.CRMG_WF__Object__c),recordTypeName = 'Task', NOT(isSelectExisting))}">
+      <apex:pageBlockSection columns="2" title="Edit {!recordTypeName}" collapsible="false">
+       
+        <apex:outputField value="{!action.CRMG_WF__Object__c}"/>
+        <apex:inputField value="{!action.CRMG_WF__tStatus__c}" required="true"/>
+        
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel escape="false" value="Assign To"/>
+            <apex:outputPanel >
+                <div class="requiredInput">
+                    <div class="requiredBlock">&nbsp;</div>
+                    <apex:selectList id="AssignType" value="{!action.CRMG_WF__tAssignedTo_Type__c}" size="1" required="false" 
+                        onChange="javascript:jQuery('#SelectedType').val(this.value);">
+                                    <apex:selectOptions value="{!eAssignToTypes}"/>
+                                  </apex:selectList>
+                    <c:SelectCombo targetField="{!action.CRMG_WF__Assign_To__c}" SObject="{!action.CRMG_WF__Object__c}" labelField="Name" valueField="ID" 
+                        editMode="{!NOT(isNull(action.Id))}" selectedVal="{!currentAssignTo}" additionalParam="SelectedTypeClass"/>
+                </div>
+                <input type="hidden" id="SelectedType" value="{!IF(isNull(action.tAssignedTo_Type__c), 'User', action.tAssignedTo_Type__c)}" class="SelectedTypeClass HiddenFilterValue"/>
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:inputField value="{!action.CRMG_WF__tPriority__c}" required="true"/>
+        <apex:inputField value="{!action.CRMG_WF__tSubject__c}" required="true" 
+            onBlur="DeveloperNameInputElement.setName(this.value);"/>
+            
+        <apex:pageBlockSectionItem />
+        <apex:inputField styleClass="UniqueNameField" value="{!action.CRMG_WF__Unique_Name__c}" required="true"/>
+        <apex:inputField value="{!action.CRMG_WF__Type__c}"/>
+      
+      
+        <apex:pageBlockSectionItem >
+        
+        <apex:outputLabel escape="false" value="Due Date"/>
+       
+          <apex:outputPanel >
+         
+            <apex:selectList id="dueDate" label="Due Date" value="{!action.CRMG_WF__tDate_Field__c}" size="1" required="true">
+                <apex:selectOptions value="{!objectFields}"/>
+            </apex:selectList>&nbsp;&nbsp;
+            <apex:inputField value="{!action.CRMG_WF__tDate_Pluss_Minus__c}"/>&nbsp;&nbsp;
+           
+            <apex:inputField value="{!action.CRMG_WF__tDate_Number__c}" style="width:30px;"/>&nbsp;&nbsp;
+            <apex:outputLabel escape="false" value="Days"/>
+          </apex:outputPanel>
+         </apex:pageBlockSectionItem>
+         </apex:pageBlockSection> 
+      <apex:pageBlockSection columns="1" collapsible="false" rendered="false">
+                <apex:inputField value="{!action.CRMG_WF__tNotify_Assignee__c}"/>
+        <apex:inputField value="{!action.CRMG_WF__tProtected_Component__c}"/>
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockSection columns="1" title="Descriptionn Information"  collapsible="false">
+          <apex:inputTextarea value="{!action.CRMG_WF__Description__c}" cols="70" rows="10" label="Description"/>
+      </apex:pageBlockSection>
+      </apex:outputPanel>
+        
+        <!-- For Email Alert Record Type -->
+      <apex:outputPanel id="pb2" 
+            rendered="{!AND(!isNULL(action.CRMG_WF__Object__c),recordTypeName = 'Email Alert', NOT(isSelectExisting))}">
+      <apex:pageBlockSection columns="1" title="Edit {!recordTypeName}" 
+                                                                                                                                                                                                                                                   collapsible="faltese">
+        <apex:inputTextarea value="{!action.CRMG_WF__Description__c}" cols="70" rows="1" label="Action Name" 
+            onBlur="DeveloperNameInputElement.setName(this.value);" />
+        <apex:inputField styleClass="UniqueNameField" value="{!action.CRMG_WF__Unique_Name__c}" required="true"/>
+        <apex:outputField value="{!action.CRMG_WF__Object__c}"/>
+        
+ 
+        <apex:selectList id="emailTemplate" label="Email Template" 
+                                                    value="{!action.CRMG_WF__eEmailTemplet__c}" size="1" required="true" rendered="{!DropDownEmail}">
+            <apex:selectOptions value="{!emailTemplates}"/>
+            </apex:selectList>
+           
+         <apex:inputtext id="searchEmail" value="{!action.CRMG_WF__eEmailTemplet__c}"  onfocus="executeJQueryEmail(this)" rendered="{!AutocompleteEmail}" required="true"/>
+        
+      </apex:pageBlockSection>
+            
+            <apex:outputPanel id="emailRerenderDiv" style="padding-left: 10%;">
+                <apex:outputLabel escape="false" value="Recipient Type" style="color: #4a4a56;
+                            text-align: right;font-size: 91%;font-weight: bold;
+                            font-family: Arial,Helvetica,sans-serif;"/>
+                &nbsp;&nbsp;
+                <apex:selectList id="recipTyp" label="Recipient Type" 
+                    value="{!eSearchRecipType}" size="1" onchange="recipTypeChange();">
+            <apex:selectOptions value="{!eRecipientTypes}"/>
+            </apex:selectList>
+            <apex:outputLabel escape="false" value=" for:"/>
+            <apex:inputText id="eRecipSearchTerm" value="{!eRecipSearchTerm}"/>
+            <apex:commandButton onClick="recipFindJS();return false;" value="Find" 
+                rerender="emailRerenderDiv, pg:frm:pgMsg" status="status" immediate="true"/>
+                
+            <c:MultiselectPicklist leftLabel="Available Recipients"
+                leftOptions="{!eAvailableRecips}"
+                rightLabel="Selected Recipients"
+                rightOptions="{!eSelectedRecips}"
+                size="10"
+                width="150px"/>
+        </apex:outputPanel>
+        
+      <apex:pageBlockSection columns="1" collapsible="false"><br></br>
+        <apex:outputLabel escape="false" value="You can enter up to five (5) email addresses to be notified. You must separate multiple email addresses with commas (',')" /><br></br> 
+        <apex:inputTextarea value="{!action.CRMG_WF__eAdditional_Emails__c}" 
+                                                        cols="70" rows="10" label="Additional Emails"/>
+               
+        <!-- <apex:selectList id="frmEmail" label="From Email Address" 
+                                                    value="{!eFromEmailAdd}" size="1" required="true">
+            <apex:selectOptions value="{!eFromEmailAddOptions}"/>
+            </apex:selectList>
+            <apex:inputField value="{!action.CRMG_WF__tSubject__c}" required="true"/>
+            
+            <apex:inputField value="{!action.Email_Body__c}" required="true"/> -->
+       <apex:inputField value="{!action.CRMG_WF__eSender_Name__c}" />
+     <apex:inputField value="{!action.CRMG_WF__eReply_To_Email_Address__c}" />
+      </apex:pageBlockSection>
+      </apex:outputPanel>
+        
+        <!-- For Field Update Record Type -->
+      <apex:outputPanel id="pb3" rendered="{!AND(!isNULL(action.CRMG_WF__Object__c),recordTypeName = 'Field Update', NOT(isSelectExisting))}">
+          <apex:pageBlockSection columns="1" title="Identification" collapsible="false">
+               <apex:inputField styleClass="UniqueNameField" value="{!action.CRMG_WF__Unique_Name__c}"/>
+               <apex:inputTextarea value="{!action.CRMG_WF__Description__c}" cols="70" rows="10" label="Description"/>
+               <apex:outputField value="{!action.CRMG_WF__Object__c}"/>
+               <apex:selectList label="Field To Update" onChange="fieldChanged();" value="{!selectedField}" size="1" required="false" rendered="{!PickListFieldUpdate}">
+                   <apex:selectOptions value="{!objectFields}"/> 
+                </apex:selectList>
+                <apex:pageBlockSectionItem rendered="{!AutocompleteFieldUpdate}">
+                     <apex:outputLabel escape="false" value="Field To Update"/>
+                     <apex:inputtext id="search" value="{!selectedField}"  onfocus="executeJQuery(this)"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!!isNULL(selectedField)}">
+                    <apex:outputLabel escape="false" value="Field Data Type"/>
+                    <apex:outputLabel escape="false" value="{!JSENCODE(selectedFieldType)}" />
+                </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>    
+          <apex:pageBlockSection id="pbs" columns="1" title="Specify New Field Value" collapsible="false" rendered="{!!isNULL(selectedField)}">
+              <apex:pageBlockSectionItem rendered="{!AND(selectedFieldType != 'Picklist', selectedFieldType != 'Checkbox')}" >
+                    <apex:outputLabel escape="false" value="{!JSENCODE(selectedFieldType)} Options" style="font-family: Arial,Helvetica,sans-serif;color: #4a4a56;"/>
+                    <apex:selectRadio value="{!action.CRMG_WF__fText_Options__c}" onChange="radioChanged(this.value);">
+                        <apex:selectOptions value="{!fieldOptions}"/>
+                    </apex:selectRadio>
+              </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem rendered="{!AND(selectedFieldType != 'Lookup',selectedFieldType != 'Picklist', selectedFieldType = 'Checkbox')}" >
+                 <apex:outputLabel escape="false" value="{!JSENCODE(selectedFieldType)} Options" style="font-family: Arial,Helvetica,sans-serif;color: #4a4a56;"/>
+                 <apex:selectRadio value="{!action.CRMG_WF__fFiedl_from__c}" onChange="radioChanged(this.value);">
+                    <apex:selectOptions value="{!fieldOptions}"/>
+                 </apex:selectRadio>
+             </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!selectedFieldType = 'Picklist'}">
+                <apex:outputLabel escape="false" value="{!JSENCODE(selectedFieldType)} Options" style="font-family: Arial,Helvetica,sans-serif;color: #4a4a56;"/>
+                <apex:selectList value="{!action.CRMG_WF__fFiedl_from__c}" size="1">
+                    <apex:selectOptions value="{!fieldOptions}"/>
+                </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem id="pbsi" rendered="{!AND( selectedFieldType!='Picklist', selectedFieldType!='Checkbox')}">
+              <apex:outputLabel id="hardCodeTextLabel" escape="false" value="Text value" style="font-family: Arial,Helvetica,sans-serif;color: #4a4a56;{!IF(OR(action.CRMG_WF__fText_Options__c == 'hardcode',action.CRMG_WF__fText_Options__c == 'hardcodelookup'),'display:block;','display:none;')}"/>
+              <apex:inputField style="width:250px;{!IF(OR(action.CRMG_WF__fText_Options__c == 'hardcode',action.CRMG_WF__fText_Options__c == 'hardcodelookup'),'display:block;','display:none;')}" id="hardCodeText" value="{!action.CRMG_WF__fFiedl_from__c}"/>
+            </apex:pageBlockSectionItem>
+           <apex:pageBlockSectionItem id="pbsi_1" rendered="{!if(filterOption.size > 1,'true','false')}">
+               <apex:outputLabel id="copyLabel"  style="display:none">Source Field</apex:outputLabel>
+                <apex:selectList label="Field To Update" size="1" multiselect="false" value="{!selectedField1}" id="copy" style="{!IF(action.CRMG_WF__fText_Options__c == 'CopyPaste','display:block;','display:none;')}">
+                    <apex:selectOptions value="{!filterOption}"/> 
+                 </apex:selectList>
+           </apex:pageBlockSectionItem>
+        
+        <apex:outputPanel id="datePbsi" style="{!IF(action.CRMG_WF__fText_Options__c == 'formula','display:block;','display:none;')}"  rendered="{!OR(selectedFieldType = 'Date', selectedFieldType = 'Datetime')}">
+            <apex:outputLabel escape="false" value="{!JSENCODE(selectedFieldName)}" style="padding-left: 10%;color: #4a4a56; text-align: right;font-size: 91%;font-weight: bold;font-family: Arial,Helvetica,sans-serif;"/>
+            &nbsp;&nbsp;
+            <apex:selectList id="FldDate" label="{!JSENCODE(selectedFieldName)}" value="{!action.CRMG_WF__tDate_Field__c}" size="1" required="false">
+                <apex:selectOptions value="{!objectFieldsDates}"/>
+            </apex:selectList>&nbsp;&nbsp;
+            <apex:inputField value="{!action.CRMG_WF__tDate_Pluss_Minus__c}"/>&nbsp;&nbsp;
+            <apex:inputField value="{!action.CRMG_WF__tDate_Number__c}"/>&nbsp;&nbsp;
+            <apex:outputLabel escape="false" value="Days"/>
+        </apex:outputPanel>
+        
+        <apex:pageBlockSectionItem id="owner" rendered="{!AND(selectedFieldType = 'Lookup',selectedFieldName = 'Owner ID')}">
+            <apex:outputLabel escape="false" value="{!JSENCODE(selectedFieldName)}" style="display:none" id="ownerIdlabel"/>
+            <apex:outputPanel id="ownerId" style="display:none">
+              <apex:inputField value="{!action.OwnerId}" required="false"/>
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <!-- <apex:inputField value="{!action.CRMG_WF__tNotify_Assignee__c}"
+                rendered="{!selectedFieldType = 'Lookup'}"/> -->
+      </apex:pageBlockSection>
+      </apex:outputPanel>
+      
+      <!-- For Select Existing Actions -->
+        <apex:outputPanel id="pb4" rendered="{!AND(!isNULL(action.CRMG_WF__Object__c),isSelectExisting)}">
+            <apex:pageBlockSection columns="2" collapsible="false">
+            </apex:pageBlockSection>
+            <apex:outputPanel id="ExistingActionType" style="padding-left: 10%;">
+                    <apex:outputLabel escape="false" value="Choose Workflow Type" style="color: #4a4a56;
+            text-align: right;font-size: 91%;font-weight: bold;font-family: Arial,Helvetica,sans-serif;"/>
+          &nbsp;&nbsp;
+          <apex:selectList id="wfActnTyp" label="Choose Workflow Type" value="{!exSearchWfActnType}" size="1" onchange="workflowActionTypeChange();">
+            <apex:selectOptions value="{!exWorkflowActionTypes}"/>
+                    </apex:selectList>
+          <apex:outputLabel escape="false" value=" for:"/>
+          <apex:inputText id="exWfActnSearchTerm" value="{!exWfActnSearchTerm}"/>
+          <apex:commandButton onClick="workflowActionFindJS();return false;" value="Find" 
+            rerender="ExistingActionType, pg:frm:pgMsg" status="status" immediate="true"/>
+                
+          <c:MultiselectPicklist leftLabel="Available Workflow Type"
+                        leftOptions="{!exAvailableWfActn}" rightLabel="Selected Workflow Type"
+            rightOptions="{!exSelectedWfActn}" size="10"/>
+        </apex:outputPanel>
+        </apex:outputPanel>
+      <!--     <span style="{!IF(recordTypeName = 'Task', 'float: right;', '')}">
+         <apex:commandButton id="save" value="Save" onclick="disableButtons();" oncomplete="save('false');" rendered="{!!isNULL(action.CRMG_WF__Object__c)}" status="status"/>
+         <apex:commandButton id="saveNew" value="Save & New" onclick="disableButtons();" oncomplete="save('true');" rendered="{!AND(!isNULL(action.CRMG_WF__Object__c),NOT(isSelectExisting))}" status="status"/>
+        <apex:commandButton id="cancel" value="Cancel" onclick="disableButtons();" oncomplete="cancel();" status="status"/>
+        </span><br></br><br></br>
+        -->
+        </apex:pageBlock>
+                  
+        <apex:actionstatus id="status">
+        <apex:facet name="start">
+          <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+               height: 100%;opacity:0.65;width:100%;"> 
+            <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+              <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+              <span class="waitingDescription">Please Wait...</span>
+            </div>
+          </div>
+        </apex:facet>
+    </apex:actionstatus>
+        <!-- All Action Functions -->
+        <apex:actionFunction action="{!saveAction}" name="save" status="status" >
+            <apex:param name="firstParam" assignTo="{!isNew}" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction action="{!cancel}" name="cancel" status="status" immediate="true"/>
+        <apex:actionFunction action="{!next}" name="next" status="status" immediate="true"/>
+            <apex:actionFunction action="{!recipTypeChange}" name="recipTypeChange" 
+                                        rerender="emailRerenderDiv, pg:frm:pgMsg" status="status"/>
+            <apex:actionFunction action="{!recipFind}" name="recipFind" 
+        rerender="emailRerenderDiv, pg:frm:pgMsg" status="status" immediate="true">
+            <apex:param name="firstParam" assignTo="{!eRecipSearchTerm}" value="" />
+            </apex:actionFunction>
+        <apex:actionFunction action="{!workflowActionTypeChange}" name="workflowActionTypeChange" 
+                                        rerender="ExistingActionType, pg:frm:pgMsg" status="status"/>
+            <apex:actionFunction action="{!workflowActionFind}" name="workflowActionFind" 
+        rerender="ExistingActionType, pg:frm:pgMsg" status="status" immediate="true">
+            <apex:param name="firstParam" assignTo="{!exWfActnSearchTerm}" value="" />
+            </apex:actionFunction>
+            <apex:actionFunction action="{!fieldChanged}" name="fieldChanged" 
+                        rerender="pb3, pg:frm:pgMsg" status="status"/>
+
+  </apex:form>
+</apex:page>

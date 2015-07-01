@@ -1,0 +1,335 @@
+<apex:page controller="CRMG_WF.workflowActionListCls">
+<link type="text/css" rel="stylesheet" href="/sCSS/31.0/sprites/1410289302000/Theme3/default/base/splash.css"/>
+<apex:stylesheet value="/sCSS/25.0/sprites/1342034628000/Theme3/default/gc/versioning.css" />
+<apex:stylesheet value="/sCSS/25.0/sprites/1342034628000/Theme3/default/gc/extended.css" />
+<apex:sectionHeader title="Workflow Actions" subtitle="All Actions"/>
+<style>
+    li{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    line-height: 20px;
+    }
+</style>
+ <apex:form >
+     <apex:pageBlock >
+    {!SelectedTab}
+          <div class="lbBody" style="argin: 0;padding: 15px; background-color: #fff; border: 1px solid #e8e8e8;">
+               <apex:tabPanel switchType="client" selectedTab="{!SelectedTab}">
+               <!-- Field Updates -->
+                    <apex:tab label="Tasks" name="Tasks" id="Tasks" >
+                        <apex:pageBlockTable value="{!AllActionTask}" var="act">
+                            <apex:column headerValue="Action">
+                                <apex:outputLink value="{!URLFOR($Action.Action__c.Edit,act.Action__r.Id,[retURL='/apex/wfaction?selectedTab=Tasks'])}"  style="font-size: 11px;">Edit</apex:outputLink> |
+                                <apex:outputLink value="{!URLFOR($Action.Action__c.Delete,act.Action__r.Id,[retURL='/apex/wfaction?selectedTab=Tasks'])}" onclick="return confirmDelete();"  style="font-size: 11px;">Del</apex:outputLink>
+                            </apex:column>
+                           <!-- <apex:column value="{!act.Action__r.Unique_Name__c}" headerValue="Name" /> -->
+                            <apex:column value="{!act.Time_Trigger__r.Workflow__r.Name}"/>
+                            <apex:column value="{!act.Action__r.CRMG_WF__Assign_To__c}"/>
+                            <apex:column value="{!act.Action__r.CRMG_WF__tPriority__c}"/>
+                            <apex:column value="{!act.Action__r.CRMG_WF__tStatus__c}"/>
+                           
+                            <apex:column value="{!act.Action__r.CRMG_WF__Object__c}"/>
+                        </apex:pageBlockTable>
+                        <div  class="bottomNav" style="height:20px;vertical-align: middle;padding:4px;">
+                        <div class="paginator" style="vertical-align: middle;">
+                        <span class="left">
+                        <span  > <apex:outputText >{!(pageNumberAction * size)+1-size}-{!IF((pageNumberAction * size)>noOfRecordsAction, noOfRecordsAction,(pageNumberAction * size))} of {!noOfRecordsAction}</apex:outputText></span>
+                        <span onmouseout="ListPaginator.unhoverSelector(this)" onmouseover="ListPaginator.hoverSelector(this)" onmousedown="ListPaginator.showSelector('00Bi0000004S2iB_paginator_selection_target')" id="00Bi0000004S2iB_paginator_selection_target" class="selectorTarget selectCount">
+                        </span>
+                        </span>
+                        <span class="prevNextLinks">
+                            <span class="prevNext">
+                             <apex:outputPanel rendered="{!!ActionhasPrevious}">
+                                <img alt="First Page" class="firstoff" src="/s.gif"/>
+                             </apex:outputPanel>
+                             <apex:outputPanel rendered="{!ActionhasPrevious}">
+                                <apex:commandLink action="{!first}"> 
+                                <img alt="First Page" class="first" src="/s.gif"/>
+                                </apex:commandLink>
+                             </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                                <apex:outputPanel rendered="{!!ActionhasPrevious}">
+                                    <img alt="Previous" class="prevoff" src="/s.gif"/>Previous
+                                </apex:outputPanel>
+                                 <apex:outputPanel rendered="{!ActionhasPrevious}">
+                                      <apex:commandLink action="{!previous}">
+                                        <img alt="Previous" class="prev" src="/s.gif"/>Previous
+                                   </apex:commandLink>
+                                </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                                <apex:outputPanel rendered="{!ActionhasNext}">
+                                   <apex:commandLink action="{!next}"> Next
+                                    <img class="next" alt="Next" title="Next" src="/s.gif"/>
+                                </apex:commandLink>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!!ActionhasNext}">
+                                    Next
+                                    <img class="nextoff" alt="Next" title="Next" src="/s.gif"/>
+                                </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                             <apex:outputPanel rendered="{!ActionhasNext}">
+                                 <apex:commandLink action="{!last}">
+                                    <img class="last" alt="Last Page" title="Last Page" src="/s.gif"/>
+                                </apex:commandLink>
+                              </apex:outputPanel> 
+                               <apex:outputPanel rendered="{!!ActionhasNext}">
+                                    <img class="lastoff" alt="Last Page" title="Last Page" src="/s.gif"/>
+                               </apex:outputPanel>   
+                            </span>
+                        </span>
+                        <span class="right">
+                             Page
+                                <input value="{!ActionpageNumber}" onkeydown="ListPaginator.keyHandle(event)" onchange="Paginator.instances['00Bi0000004S2iB_paginator'].goToPage(this.value)" maxlength="4" class="pageInput"/>
+                                of {!CEILING(conActionTask.ResultSize/conActionTask.PageSize)}</span>
+                            </div>
+                            <div class="clearingBox">
+                            </div>
+                       </div>
+                    </apex:tab>
+                      <!-- Field Updates -->
+                      <!-- Task -->
+                    <apex:tab label="Field Updates" name="FieldUpdates" id="FieldUpdates">
+                        <apex:pageBlockTable value="{!AllActionFldUpdate}" var="act">
+                         <apex:column headerValue="Action">
+                                <apex:outputLink value="{!URLFOR($Action.Action__c.Edit,act.Action__r.Id,[retURL='/apex/wfaction?selectedTab=FieldUpdates'])}"  style="font-size: 11px;">Edit</apex:outputLink> |
+                                <apex:outputLink value="{!URLFOR($Action.Action__c.Delete,act.Action__r.Id,[retURL='/apex/wfaction?selectedTab=FieldUpdates'])}" onclick="return confirmDelete();"  style="font-size: 11px;">Del</apex:outputLink>
+                            </apex:column>
+                             <apex:column value="{!act.Time_Trigger__r.Workflow__r.Name}"/> 
+                            <!--<apex:column value="{!act.Action__r.Unique_Name__c}"/> -->
+                            <apex:column value="{!act.Action__r.CRMG_WF__Field_Paste__c}" headerValue="Source Field"/>
+                            <apex:column value="{!act.Action__r.CRMG_WF__fFiedl_from__c}" headerValue="Update Value"/>
+                            <apex:column value="{!act.Action__r.CRMG_WF__fField_to_Update__c}"/>
+                            
+                           
+                        </apex:pageBlockTable>
+                          <div  class="bottomNav" style="height:20px;vertical-align: middle;padding:4px;">
+                        <div class="paginator" style="vertical-align: middle;">
+                        <span class="left">
+                      
+                        <span  > <apex:outputText >{!(pageNumberFldUpdate * size2)+1-size2}-{!IF((pageNumberFldUpdate * size2)>noOfRecordsFldUpdate, noOfRecordsFldUpdate,(pageNumberFldUpdate * size2))} of {!noOfRecordsFldUpdate}</apex:outputText>
+                    <!--    <img src="/s.gif" class="selectArrow"/> -->
+                        </span>
+                        <span onmouseout="ListPaginator.unhoverSelector(this)" onmouseover="ListPaginator.hoverSelector(this)" onmousedown="ListPaginator.showSelector('00Bi0000004S2iB_paginator_selection_target')" id="00Bi0000004S2iB_paginator_selection_target" class="selectorTarget selectCount">
+                        </span>
+                        </span>
+                        <span class="prevNextLinks">
+                            <span class="prevNext">
+                             <apex:outputPanel rendered="{!!FldUpdatehasPrevious}">
+                                <img alt="First Page" class="firstoff" src="/s.gif"/>
+                             </apex:outputPanel>
+                             <apex:outputPanel rendered="{!FldUpdatehasPrevious}">
+                                <apex:commandLink action="{!FldUpdatefirst}"> 
+                                <img alt="First Page" class="first" src="/s.gif"/>
+                                </apex:commandLink>
+                             </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                                <apex:outputPanel rendered="{!!FldUpdatehasPrevious}">
+                                    <img alt="Previous" class="prevoff" src="/s.gif"/>Previous
+                                </apex:outputPanel>
+                                 <apex:outputPanel rendered="{!FldUpdatehasPrevious}">
+                                      <apex:commandLink action="{!FldUpdateprevious}">
+                                        <img alt="Previous" class="prev" src="/s.gif"/>Previous
+                                   </apex:commandLink>
+                                </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                                <apex:outputPanel rendered="{!FldUpdatehasNext}">
+                                   <apex:commandLink action="{!FldUpdatenext}"> Next
+                                    <img class="next" alt="Next" title="Next" src="/s.gif"/>
+                                </apex:commandLink>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!!FldUpdatehasNext}">
+                                    Next
+                                    <img class="nextoff" alt="Next" title="Next" src="/s.gif"/>
+                                </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                             <apex:outputPanel rendered="{!FldUpdatehasNext}">
+                                 <apex:commandLink action="{!FldUpdatelast}">
+                                    <img class="last" alt="Last Page" title="Last Page" src="/s.gif"/>
+                                </apex:commandLink>
+                              </apex:outputPanel> 
+                               <apex:outputPanel rendered="{!!FldUpdatehasNext}">
+                                    <img class="lastoff" alt="Last Page" title="Last Page" src="/s.gif"/>
+                              </apex:outputPanel>   
+                            </span>
+                        </span>
+                        <span class="right">
+                             Page
+                                <input value="{!FldUpdatepageNumber}" onkeydown="ListPaginator.keyHandle(event)" onchange="Paginator.instances['00Bi0000004S2iB_paginator'].goToPage(this.value)" maxlength="4" class="pageInput"/>of 
+                                {!CEILING(conActionFldUpdate.ResultSize/conActionFldUpdate.PageSize)}
+                                </span>
+                            </div>
+                            <div class="clearingBox">
+                            </div>
+                       </div>
+                    </apex:tab>
+                     <!-- Task -->
+                     <!-- Email Alert -->
+                    <apex:tab label="Email Alerts" name="EmailAlerts" id="EmailAlerts">
+                    <apex:pageBlockTable value="{!AllActionEmail}" var="act">
+                     <apex:column headerValue="Action" width="100px">
+                                <apex:outputLink value="{!URLFOR($Action.Action__c.Edit,act.Action__r.Id,[retURL='/apex/wfaction'])}"  style="font-size: 11px;">Edit</apex:outputLink> |
+                                <apex:outputLink value="{!URLFOR($Action.Action__c.Delete,act.Action__r.Id,[retURL='/apex/wfaction'])}" onclick="return confirmDelete();"  style="font-size: 11px;">Del</apex:outputLink>
+                            </apex:column>
+                             <apex:column value="{!act.Time_Trigger__r.Workflow__r.Name}"/>
+                           <!-- <apex:column value="{!act.Action__r.Unique_Name__c}" width="50"/> -->
+                           
+                           <!-- <apex:column value="{!act.Action__r.eEmailTemplet__c}"/> -->
+                           <!-- <apex:column value="{!act.Action__r.eRecipients__c}"/> -->
+                            <!--<apex:column value="{!act.Action__r.tSubject__c}"/> -->
+                            <apex:column value="{!act.Action__r.CRMG_WF__eAdditional_Emails__c}" style="width:60px"/>
+                        </apex:pageBlockTable>
+                          <div  class="bottomNav" style="height:20px;vertical-align: middle;padding:4px;">
+                        <div class="paginator" style="vertical-align: middle;">
+                        <span class="left">
+                        <span  >
+                        <apex:outputText >{!(pageNumberEmail * size3)+1-size3}-{!IF((pageNumberEmail * size2)>noOfRecordsEmail, noOfRecordsEmail,(pageNumberEmail * size3))} of {!noOfRecordsEmail}</apex:outputText>
+                    <!--    <img src="/s.gif" class="selectArrow"/> -->
+                        </span>
+                        <span onmouseout="ListPaginator.unhoverSelector(this)" onmouseover="ListPaginator.hoverSelector(this)" onmousedown="ListPaginator.showSelector('00Bi0000004S2iB_paginator_selection_target')" id="00Bi0000004S2iB_paginator_selection_target" class="selectorTarget selectCount">
+                        </span>
+                        </span>
+                        <span class="prevNextLinks">
+                            <span class="prevNext">
+                             <apex:outputPanel rendered="{!!EmailhasPrevious}">
+                                <img alt="First Page" class="firstoff" src="/s.gif"/>
+                             </apex:outputPanel>
+                             <apex:outputPanel rendered="{!EmailhasPrevious}">
+                                <apex:commandLink action="{!Emailfirst}"> 
+                                <img alt="First Page" class="first" src="/s.gif"/>
+                                </apex:commandLink>
+                             </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                                <apex:outputPanel rendered="{!!EmailhasPrevious}">
+                                    <img alt="Previous" class="prevoff" src="/s.gif"/>Previous
+                                </apex:outputPanel>
+                                 <apex:outputPanel rendered="{!EmailhasPrevious}">
+                                      <apex:commandLink action="{!Emailprevious}">
+                                        <img alt="Previous" class="prev" src="/s.gif"/>Previous
+                                   </apex:commandLink>
+                                </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                                <apex:outputPanel rendered="{!EmailhasNext}">
+                                   <apex:commandLink action="{!Emailnext}"> Next
+                                    <img class="next" alt="Next" title="Next" src="/s.gif"/>
+                                </apex:commandLink>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!!EmailhasNext}">
+                                    Next
+                                    <img class="nextoff" alt="Next" title="Next" src="/s.gif"/>
+                                </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                             <apex:outputPanel rendered="{!EmailhasNext}">
+                                 <apex:commandLink action="{!Emaillast}">
+                                    <img class="last" alt="Last Page" title="Last Page" src="/s.gif"/>
+                                </apex:commandLink>
+                              </apex:outputPanel> 
+                               <apex:outputPanel rendered="{!!EmailhasNext}">
+                                    <img class="lastoff" alt="Last Page" title="Last Page" src="/s.gif"/>
+                              </apex:outputPanel>   
+                            </span>
+                        </span>
+                        <span class="right">
+                             Page
+                                <input value="{!EmailpageNumber}" onkeydown="ListPaginator.keyHandle(event)" onchange="Paginator.instances['00Bi0000004S2iB_paginator'].goToPage(this.value)" maxlength="4" class="pageInput"/>of  
+                                {!CEILING(conAllActionEmail.ResultSize/conAllActionEmail.PageSize)}</span>
+                            </div>
+                            <div class="clearingBox">
+                            </div>
+                       </div>
+                    </apex:tab>
+                     <!-- Email Alert -->
+                     <!-- New Record -->
+                    <apex:tab label="New Records" name="NewRecords" id="newRecords" >
+                    <apex:pageBlockTable value="{!AllActionNewRecord}" var="act">
+                     <apex:column headerValue="Action">
+                                <!--<apex:outputLink value="{!URLFOR($Action.Action__c.Edit,act.Action__r.Id,[retURL=act.Time_Trigger__r.Workflow__c])}">Edit</apex:outputLink> |
+                                <apex:outputLink value="{!URLFOR($Action.Action__c.Delete,act.Action__r.Id,[retURL='/apex/wfaction'])}" onclick="return confirmDelete();">Del</apex:outputLink> -->
+                                <apex:outputLink value="/apex/CreateNewRecord?actionId={!act.Action__r.Id}&retURL=/apex/wfaction?selectedTab=NewRecords" style="font-size: 11px;">Edit</apex:outputLink>  |
+                                 <apex:outputLink value="{!URLFOR($Action.Action__c.Delete,act.Action__r.Id,[retURL='/apex/wfaction'])}" onclick="return confirmDelete();"  style="font-size: 11px;">Del</apex:outputLink>
+                            </apex:column>
+                            <apex:column value="{!$ObjectType[act.Action__r.CRMG_WF__Object__c].label}"/>
+                            <apex:column value="{!act.CRMG_WF__Action__r.CRMG_WF__Description__c}"/>
+                            <apex:column value="{!$ObjectType[act.CRMG_WF__Action__r.CRMG_WF__BaseObject__c].label}"/>
+                            
+                        </apex:pageBlockTable>
+                        
+                          <div  class="bottomNav" style="height:20px;vertical-align: middle;padding:4px;">
+                        <div class="paginator" style="vertical-align: middle;">
+                        <span class="left">
+                        <span  >
+                        <apex:outputText >{!(pageNumberNewRecord * size4)+1-size4}-{!IF((pageNumberNewRecord * size4)>noOfRecordsNewRecord, noOfRecordsNewRecord,(pageNumberNewRecord * size4))} of {!noOfRecordsNewRecord}</apex:outputText>
+                    
+                    <!--    <img src="/s.gif" class="selectArrow"/> -->
+                        </span>
+                        <span onmouseout="ListPaginator.unhoverSelector(this)" onmouseover="ListPaginator.hoverSelector(this)" onmousedown="ListPaginator.showSelector('00Bi0000004S2iB_paginator_selection_target')" id="00Bi0000004S2iB_paginator_selection_target" class="selectorTarget selectCount">
+                        </span>
+                        </span>
+                        <span class="prevNextLinks">
+                            <span class="prevNext">
+                             <apex:outputPanel rendered="{!!NewRecordhasPrevious}">
+                                <img alt="First Page" class="firstoff" src="/s.gif"/>
+                             </apex:outputPanel>
+                             <apex:outputPanel rendered="{!NewRecordhasPrevious}">
+                                <apex:commandLink action="{!NewRecordfirst}"> 
+                                <img alt="First Page" class="first" src="/s.gif"/>
+                                </apex:commandLink>
+                             </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                                <apex:outputPanel rendered="{!!NewRecordhasPrevious}">
+                                    <img alt="Previous" class="prevoff" src="/s.gif"/>Previous
+                                </apex:outputPanel>
+                                 <apex:outputPanel rendered="{!NewRecordhasPrevious}">
+                                      <apex:commandLink action="{!NewRecordprevious}">
+                                        <img alt="Previous" class="prev" src="/s.gif"/>Previous
+                                   </apex:commandLink>
+                                </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                                <apex:outputPanel rendered="{!NewRecordhasNext}">
+                                   <apex:commandLink action="{!NewRecordnext}"> Next
+                                    <img class="next" alt="Next" title="Next" src="/s.gif"/>
+                                </apex:commandLink>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!!NewRecordhasNext}">
+                                    Next
+                                    <img class="nextoff" alt="Next" title="Next" src="/s.gif"/>
+                                </apex:outputPanel>
+                            </span>
+                            <span class="prevNext">
+                             <apex:outputPanel rendered="{!NewRecordhasNext}">
+                                 <apex:commandLink action="{!NewRecordlast}">
+                                    <img class="last" alt="Last Page" title="Last Page" src="/s.gif"/>
+                                </apex:commandLink>
+                              </apex:outputPanel> 
+                               <apex:outputPanel rendered="{!!NewRecordhasNext}">
+                                    <img class="lastoff" alt="Last Page" title="Last Page" src="/s.gif"/>
+                              </apex:outputPanel>   
+                            </span>
+                        </span>
+                        <span class="right">
+                             Page
+                                <input value="{!NewRecordpageNumber}" onkeydown="ListPaginator.keyHandle(event)" onchange="Paginator.instances['00Bi0000004S2iB_paginator'].goToPage(this.value)" maxlength="4" class="pageInput">of 
+                                 </input>
+                                 {!CEILING(conAllActionNewRecord.ResultSize/conAllActionNewRecord.PageSize)}</span>
+                            </div>
+                            <div class="clearingBox">
+                            </div>
+                       </div>
+                    </apex:tab>
+                      <!-- New Record -->
+               </apex:tabPanel>
+           </div>          
+     </apex:pageBlock>
+     </apex:form>
+</apex:page>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>List</customSettingsType>
+    <customSettingsVisibility>Public</customSettingsVisibility>
+    <enableFeeds>false</enableFeeds>
+    <fields>
+        <fullName>Email_Templete_Autocomplete__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Alert Template Auto Complete</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_Templete_Picklist__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Alert Template Picklist</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>ExecuteNow__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Selecting &quot;Checked&quot; below makes the &quot;Execute Now&quot; button visible by default on the Workflow Rule Detail page.</description>
+        <externalId>false</externalId>
+        <label>Execute Now</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Field_Update_Auto_Complete__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Field Update Auto Complete</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Field_Update_Picklist__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Field Update Picklist</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Lookup_Page_Size__c</fullName>
+        <defaultValue>50</defaultValue>
+        <deprecated>false</deprecated>
+        <description>This setting is to manage the pagination for the Email Templates list. The default value is set to 50.</description>
+        <externalId>false</externalId>
+        <label>Lookup Page Size</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>New_Record_Auto_Complete__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Create New Record Auto Complete</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>New_Record_Picklist__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Create New Record Picklist</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>WorkflowSplash__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Turn Off Workflow Splash Page</label>
+        <type>Checkbox</type>
+    </fields>
+    <label>Workflow Setting</label>
+</CustomObject>

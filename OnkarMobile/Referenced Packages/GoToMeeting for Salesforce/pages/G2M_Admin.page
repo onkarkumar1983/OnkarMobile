@@ -1,0 +1,55 @@
+<apex:page controller="G2M4Force.G2M_Admin_Controller" action="{!loadInitialValues}" tabStyle="G2M_Admin__tab">
+    <apex:form >
+      <apex:sectionHeader title="GoToMeeting� User Settings"/>
+      <apex:pageBlock mode="edit" title="GoToMeeting Integration Settings">
+      
+      <apex:pageblockSection title="Notifications" columns="1" id="exceptions">
+         <apex:pageMessages />
+      </apex:pageblockSection>
+          <!-- Init App -->
+        <apex:pageblockSection title="Setup GoToMeeting for Salesforce" columns="1" id="initApp" rendered="{!NOT(initialized)}">
+            <apex:commandButton value="Setup Integration" action="{!initialize}"/>
+        </apex:pageblockSection>      
+        
+           <apex:pageblockSection title="Connect to GoToMeeting" columns="1" id="userMaintenance">  
+             <apex:commandButton value="Connect an Account" action="{!refreshG2MAuthorizationKey}" disabled="{!NOT(initialized)}" rendered="{!NOT(userAuthorized)}"/>
+             <apex:commandButton value="Disconnect" action="{!disconnect}" rendered="{!userAuthorized}"/>
+        </apex:pageBlockSection>    
+            
+        <apex:pageblockSection title="Meeting Synchronization - Occurs Nightly" columns="1" id="synchronizeMeetings" rendered="{!isAuthKeyValid}">        
+        <script>
+            function disableOnSubmit(input) {
+                setTimeout('disableAfterTimeout(\'' + input.id + '\');', 50);
+            }
+            function disableAfterTimeout(id) {
+                var toDisable = document.getElementById( id );
+                toDisable.disabled = 'disabled';
+                // Use the Salesforce CSS style to make the button appear disabled
+                toDisable.className = 'btnDisabled';
+                toDisable.value = "Synchronizing..."
+            }
+        </script>
+        <apex:commandButton id="SyncMeetingsButton" value="Synchronize My Meetings" disabled="{!NOT(initialized)}" onclick="disableOnSubmit(this);" action="{!synchronizeMeetings}"/>
+ 
+        </apex:pageBlockSection>             
+        
+        <!-- Logger Setup -->
+        <apex:pageblockSection title="Log Settings" columns="1" id="loggerSettings" rendered="{!NOT(ISNULL(loggerInstance)) && initialized}">
+            <apex:pageBlockSectionItem labelStyle="width:5%">
+               <apex:outputLabel value="Email Logs" style="float:left"/>
+               <apex:outputPanel >
+                 <apex:inputField label="Email Logs" value="{!loggerInstance.G2M4Force__enableLoggerEmails__c}" onClick="SaveLogSettings()" id="EmailLogs"/>
+                 <apex:actionFunction name="SaveLogSettings" action="{!saveLoggerSettings}" rerender="EmailLogs"/>
+               </apex:outputPanel>
+             </apex:pageBlockSectionItem>                     
+        </apex:pageblockSection>
+        
+        <!-- Manage Scheduler  -->
+        <apex:pageblockSection title="Manage Batch Schedules" columns="2" id="manageBatchSchedules" rendered="false">  
+            <apex:commandButton value="Schedule Batch Processes" action="{!manageBatchSchedules}" disabled="{!NOT(initialized)}"/>
+            <apex:commandButton value="Kick off Meeting updates" action="{!kickOffMeetingUpdater}" disabled="{!NOT(initialized)}"/>
+        </apex:pageblockSection>
+        
+      </apex:pageBlock>
+    </apex:form>
+</apex:page>

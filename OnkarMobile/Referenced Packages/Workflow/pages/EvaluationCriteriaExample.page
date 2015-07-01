@@ -1,0 +1,133 @@
+<apex:page showHeader="false" sidebar="false">
+    <div id="helpwrapper">
+    <table class="featureTable" cellpadding="4" cellspacing="0">
+        <thead align="left" class="thead">
+            <tr class="row">
+                <th colspan="1" rowspan="1" class="featureTableHeader" id="d9656149e132" width="32%">
+                    <span class="keyword parmname"><span class="ph">Evaluate the rule when a record is:</span></span>
+                </th>
+                <th colspan="1" rowspan="1" class="featureTableHeader" id="d9656149e137" width="68%">Description</th>
+            </tr>
+        </thead>
+        <tbody class="tbody">
+            <tr class="row">
+                <td colspan="1" rowspan="1" class="entry" width="32%">
+                    <span class="keyword parmname">
+                        <span class="ph" id="WFRules_evalcriteria_created">
+                            <a name="WFRules_evalcriteria_created"></a>Created
+                        </span>
+                    </span>
+                </td>
+                <td colspan="1" rowspan="1" class="entry" width="68%">
+                    (Default) Evaluate the rule criteria only within the first 30 minutes of a record being created. Records will not be considered for meeting this criteria after that first 30 minute period. If the rule criteria is met, run the rule. Updated/edits beyond the initial 30 period are ignored.
+                    <p class="p">With this option, the rule never runs more than once per record.</p>
+                </td>
+            </tr>
+            <tr class="row">
+                <td colspan="1" rowspan="1" class="entry" width="32%">
+                    <span class="keyword parmname">
+                        <span class="ph" id="WFRules_evalcriteria_created-or-edited">
+                            <a name="WFRules_evalcriteria_created-or-edited"></a>Created or edited
+                        </span>
+                    </span>
+                </td>
+            <td colspan="1" rowspan="1" class="entry" width="68%">
+                Evaluate the rule criteria only when a record is created or updated. 
+                If the rule criteria is met, run the rule.
+                <p class="p">With this option, our workflow engine will consider all records that meet your criteria, only if that record was created or edited within the last 30 minutes. </p>
+                <p>With this option, your workflow actions will never execute more than 1 time per record.</p>
+                <div class="note">
+                    <div class="noteTitle">Note </div>
+                <div class="noteBody">
+                    <img align="left" src="/img/help/helpNote_icon.gif"/>This is not the right option for you if the intent is for your workflow actions to fire off more than 1 time on a given record. If you are writing a workflow on a highly active object where records change in and out of meeting criteria, and each time criteria are met you need the workflow actions to fire, do not select this option. You must select Option 3 for records that may meet your criteria more than 1 time over the full lifespan of a record.
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr class="row">
+        <td colspan="1" rowspan="1" class="entry" width="32%">
+            <span class="keyword parmname">
+                <span class="ph" id="WFRules_evalcriteria_created_edit2meetcriteria">
+                    <a name="WFRules_evalcriteria_created_edit2meetcriteria"></a>
+                    <!-- created, and any time it’s edited to subsequently meet criteria -->
+                    Any time the criteria is met. Created and or Edited is not a factor. This criteria is Ideal for "Mass Updates"
+                </span>
+            </span>
+        </td>
+        <td colspan="1" rowspan="1" class="entry" width="68%">
+            Evaluates every record on the target object seeking to identify any record that meets your rule criteria, regardless if 
+            that record has been edited or not. All records are evaluated every time the workflow engine runs. And every time the workflow 
+            engine runs and a record is found to meet your criteria, the Workflow Actions will execute. This can cause proliferating 
+            Workflow Actions if you have written rules that do not close the loop. 
+            <ul class="ul">
+                
+            </ul>
+            <p class="p">With this option, your workflow actions can run multiple times per record, as long as the criteria are met. 
+            This means that once the criteria are met, even if the record isn't modified before the workflow engine runs again, your 
+            workflow actions will execute again and again, until the criteria are no longer met. To avoid executing the same Workflow 
+            Action repeated, here are a few simple steps you can use to help close the loop on your Rule Criteria and prevent proliferating Workflow Actions:</p>
+
+<p><b>Field Updates</b>:</p> <ol>
+Make sure you use the same field that is being updated as one of your WF Rule filters, and use the operator "NOT EQUAL TO". As an example, 
+let's say the objective of your new Workflow Rule is to update "Field B" to "Completed" anytime "Field A" is no longer blank. Here is 
+an example of how you might want to configure your Workflow Rule to close the loop on your Workflow Rule:
+<p></p>
+<li>Field B NOT EQUAL TO "Completed"; AND</li>
+<li>Field A EQUAL "Null" (FYI: Do not type the word null as your value. Instead, just leave the value field blank)</li>
+</ol>
+<p><b>Email Alerts</b>:</p> <ol>
+<li>Create a new Checkbox field on the same object that your Workflow Rule is based on and name it in a way that clearly supports the Workflow 
+Action you want to deliver. For example, lets say your Email Alert is related to sending an invoice notification to the Operations team. You 
+might create a new checkbox field named "Invoice Notification Sent" </li>
+<li>When you write your Workflow Rule, add your new Checkbox Field as one of the filters on your Workflow Rule Criteria. i.e. Checkbox Field EQUALS "False" </li>
+<li>Add a new Field Update to update this new field at the same time that your Email Alert is sent </li>
+<li>Build a WF Rule that updates this new Checkbox field to False, whenever your Workflow Rule Criteria is no longer met. </li>
+</ol><p><b>New Task</b>: </p>
+<oL>
+<li>Create a New Checkbox Field that supports your workflow. "Task Created" </li>
+<li>Build a WF Rule that updates this new Checkbox field to False, whenever your Workflow Rule Criteria is no longer met. This will deselect 
+"Task Created", so in the future, on this record, if the criteria are met again, WF will create another Task.</li>
+</OL>        </td>
+    </tr>
+</tbody>
+</table>
+</div>
+<style>
+    #helpwrapper .featureTableHeader {
+        background-color: #a9a19d;
+        border: medium none;
+        color: #ffffff;
+    }
+    
+    #helpwrapper li .featureTable {
+        padding: 10px 0 10px 0;
+        margin-left: 0px;
+        margin-top: 10px;
+    }
+    
+    #helpwrapper .featureTable td {
+        border-bottom: 1px solid #a9a19d;
+        padding: 4px;
+    }
+    
+    #helpwrapper .note {
+        font-size: 90%;
+        border: 1px solid #8E9CBD;
+        margin: 10px 0 10px 0;
+        min-height: 75px;
+        height: auto !important;
+        height: 75px;
+    }
+    
+    #helpwrapper .noteTitle {
+        color: #333;
+        font-size: 100%;
+        font-weight: bold;
+        margin: 0 2px;
+    }
+
+    #helpwrapper .featureTable .note .noteBody {
+        font-size: 100%;
+    }
+</style>
+</apex:page>
