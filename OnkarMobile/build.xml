@@ -3,10 +3,10 @@
  <property environment="env"/>
  <target name="test">
   <sf:deploy username="${sf.username}" 
-  			password="${sf.password}" 
-  			serverurl="${sf.serverurl}" 
-  			runAllTest="false"
-  			logType="Detail"
-  			deployRoot="src"/>
+  			 password="${sf.password}" 
+  			 serverurl="${sf.serverurl}" 
+  			 runAllTest="false"
+  			 logType="Detail"
+  			 deployRoot="src"/>
  </target>
  </project>
