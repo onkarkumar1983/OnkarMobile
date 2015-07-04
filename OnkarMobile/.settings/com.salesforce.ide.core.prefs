@@ -8,5 +8,5 @@ keependpoint=false
 metadataFormatVersion=28.0
 namespacePrefix=
 packageName=unpackaged
-readTimeout=400
+readTimeout=600
 username=onkarmobile@icloud.com
