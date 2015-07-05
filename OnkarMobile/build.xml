@@ -4,8 +4,7 @@
  <target name="test">
   <sf:deploy username="${sf.username}" 
   			 password="${sf.password}" 
-  			serverurl="${sf.serverurl}" 
-  			runAllTest="false"
+  			serverurl="${sf.serverurl}"
   			logType="Detail"
   			deployRoot="src"/>
  </target>
